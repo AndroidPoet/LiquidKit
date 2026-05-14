@@ -8,8 +8,22 @@ through Compose Multiplatform interop.
 
 ## Components
 
+- `LiquidSurface`
+- `LiquidButton`
+- `LiquidToggle`
+- `LiquidSlider`
 - `LiquidBottomNavigation`
 - `LiquidDropdown`
+
+## Architecture
+
+LiquidKit keeps component behavior in `commonMain` and isolates glass rendering
+behind a single platform surface.
+
+- Android uses `AndroidLiquidGlass` / `backdrop` for Liquid Glass rendering.
+- iOS uses native `UIVisualEffectView` through Compose Multiplatform UIKit interop.
+- Shared components compose on top of `LiquidSurface`, so new controls do not need
+  duplicated platform implementations unless they need platform-native behavior.
 
 ## Credits
 
@@ -37,5 +51,17 @@ LiquidBottomNavigation(
     items = items,
     selectedKey = "home",
     onSelected = { key -> /* update state */ },
+)
+```
+
+```kotlin
+LiquidToggle(
+    checked = enabled,
+    onCheckedChange = { enabled = it },
+)
+
+LiquidSlider(
+    value = volume,
+    onValueChange = { volume = it },
 )
 ```

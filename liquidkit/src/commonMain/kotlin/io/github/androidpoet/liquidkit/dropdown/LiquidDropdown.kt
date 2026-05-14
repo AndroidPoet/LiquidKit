@@ -56,6 +56,7 @@ private fun <T : Any> DropDownMenuBuilder<T>.addLiquidItem(item: LiquidDropdownI
         id = item.key,
         title = item.title,
     ) {
+        item.icon?.let { icon(it.imageVector) }
         item.children.forEach { child -> addLiquidItem(child) }
     }
 }

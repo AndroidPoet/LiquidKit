@@ -9,6 +9,7 @@ through Compose Multiplatform interop.
 ## Components
 
 - `LiquidSurface`
+- `LiquidIcon`
 - `LiquidButton`
 - `LiquidToggle`
 - `LiquidSlider`
@@ -42,9 +43,9 @@ io.github.androidpoet.liquidkit
 
 ```kotlin
 val items = listOf(
-    LiquidNavigationItem("home", "Home"),
-    LiquidNavigationItem("search", "Search"),
-    LiquidNavigationItem("settings", "Settings"),
+    LiquidNavigationItem("home", "Home", icon = LiquidIcon(Icons.Rounded.Home)),
+    LiquidNavigationItem("search", "Search", icon = LiquidIcon(Icons.Rounded.Search)),
+    LiquidNavigationItem("settings", "Settings", icon = LiquidIcon(Icons.Rounded.Settings)),
 )
 
 LiquidBottomNavigation(
@@ -58,6 +59,12 @@ LiquidBottomNavigation(
 LiquidToggle(
     checked = enabled,
     onCheckedChange = { enabled = it },
+)
+
+LiquidButton(
+    text = "Continue",
+    icon = LiquidIcon(Icons.Rounded.ArrowForward),
+    onClick = { /* continue */ },
 )
 
 LiquidSlider(

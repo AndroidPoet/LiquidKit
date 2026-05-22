@@ -12,8 +12,6 @@ public data class LiquidGlassStyle(
     public val selectedContainerColor: Color,
     public val contentColor: Color,
     public val selectedContentColor: Color,
-    public val blurRadius: Dp,
-    public val refractionHeight: Dp,
 ) {
     public companion object {
         public val Surface: LiquidGlassStyle = LiquidGlassStyle(
@@ -22,8 +20,6 @@ public data class LiquidGlassStyle(
             selectedContainerColor = Color.White.copy(alpha = 0.42f),
             contentColor = Color(0xFF4E5968),
             selectedContentColor = Color(0xFF101418),
-            blurRadius = 16.dp,
-            refractionHeight = 10.dp,
         )
 
         public val Control: LiquidGlassStyle = LiquidGlassStyle(
@@ -32,8 +28,6 @@ public data class LiquidGlassStyle(
             selectedContainerColor = Color(0xFF111820).copy(alpha = 0.08f),
             contentColor = Color(0xFF4E5968),
             selectedContentColor = Color(0xFF101418),
-            blurRadius = 14.dp,
-            refractionHeight = 8.dp,
         )
 
         public val NavigationBar: LiquidGlassStyle = LiquidGlassStyle(
@@ -42,8 +36,6 @@ public data class LiquidGlassStyle(
             selectedContainerColor = Color.White.copy(alpha = 0.42f),
             contentColor = Color(0xFF4E5968),
             selectedContentColor = Color(0xFF101418),
-            blurRadius = 18.dp,
-            refractionHeight = 14.dp,
         )
     }
 }

@@ -10,14 +10,10 @@ public fun liquidGlassStyle(
     selectedContainerColor: Color = base.selectedContainerColor,
     contentColor: Color = base.contentColor,
     selectedContentColor: Color = base.selectedContentColor,
-    blurRadius: Dp = base.blurRadius,
-    refractionHeight: Dp = base.refractionHeight,
 ): LiquidGlassStyle = LiquidGlassStyle(
     cornerRadius = cornerRadius,
     containerColor = containerColor,
     selectedContainerColor = selectedContainerColor,
     contentColor = contentColor,
     selectedContentColor = selectedContentColor,
-    blurRadius = blurRadius,
-    refractionHeight = refractionHeight,
 )

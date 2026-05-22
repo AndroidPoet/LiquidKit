@@ -31,6 +31,6 @@ class LiquidGlassStyleTest {
         assertEquals(12.dp, style.cornerRadius)
         assertEquals(Color.Red, style.containerColor)
         assertEquals(LiquidGlassStyle.NavigationBar.selectedContentColor, style.selectedContentColor)
-        assertEquals(LiquidGlassStyle.NavigationBar.blurRadius, style.blurRadius)
+        assertEquals(LiquidGlassStyle.NavigationBar.contentColor, style.contentColor)
     }
 }

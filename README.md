@@ -1,93 +1,26 @@
-# LiquidKit
+# LiquidGlass
 
-LiquidKit is a Kotlin Multiplatform Liquid Glass component kit.
+LiquidGlass is a Kotlin Multiplatform component kit for Liquid Glass-style UI.
 
-It gives Compose apps a small common API while each platform renders the best
-native-feeling control it can:
-
-- Android uses the vendored AndroidLiquidGlass renderer.
-- iOS uses native UIKit controls through Compose interop.
-- iOS 26 apps should use SwiftUI `TabView` for native Liquid Glass tabs.
-
-## Modules
+Current Maven/module coordinates still use `liquidkit` until a deliberate
+breaking rename is made.
 
 ```kotlin
 io.github.androidpoet.liquidkit
 io.github.androidpoet.liquidkit.navigation3 // optional
 ```
 
-Core `liquidkit` has no Navigation 3 dependency. Use
-`liquidkit-navigation3` only when Compose owns your tabs.
-
-## Components
+## What You Get
 
 - `LiquidToggle`
 - `LiquidSlider`
 - `LiquidSegmentedControl`
 - `LiquidBottomNavigation`
 - `LiquidTabScaffold`
-- `LiquidNav3TabScaffold` from the optional Nav3 module
+- Optional Navigation 3 helpers for bottom-navigation tab stacks
 
-## Simple Tabs
-
-```kotlin
-val items = listOf(
-    LiquidNavigationItem("home", "Home", LiquidIcon(Icons.Rounded.Home)),
-    LiquidNavigationItem("search", "Search", LiquidIcon(Icons.Rounded.Search)),
-    LiquidNavigationItem("settings", "Settings", LiquidIcon(Icons.Rounded.Settings)),
-)
-
-LiquidTabScaffold(items = items) { selectedTab ->
-    when (selectedTab) {
-        "home" -> HomeScreen()
-        "search" -> SearchScreen()
-        "settings" -> SettingsScreen()
-    }
-}
-```
-
-Use `LiquidBottomNavigation` directly when another router owns selection:
-
-```kotlin
-LiquidBottomNavigation(
-    items = items,
-    selectedKey = currentTab,
-    onSelected = { currentTab = it },
-)
-```
-
-## Navigation 3 Tabs
-
-For Compose-owned Nav3 tabs, pass normal `LiquidNavigationItem<NavKey>` values.
-LiquidKit keeps the selected tab and per-tab back stacks inside the helper.
-
-```kotlin
-val items = listOf(
-    LiquidNavigationItem(HomeRoute, "Home", homeIcon),
-    LiquidNavigationItem(SearchRoute, "Search", searchIcon),
-)
-
-val entries = entryProvider<NavKey> {
-    entry<HomeRoute> { HomeScreen() }
-    entry<SearchRoute> { SearchScreen() }
-}
-
-LiquidNav3TabScaffold(
-    items = items,
-    savedStateConfiguration = nav3SavedStateConfiguration,
-    entryProvider = entries,
-)
-```
-
-## iOS 26 Tabs
-
-On iOS 26, keep tabs native:
-
-- SwiftUI owns `TabView`.
-- Each tab hosts one Compose root.
-- Compose/Nav3 does not own the iOS tab bar.
-
-The sample does this in `iosApp/LiquidKitSample/ContentView.swift`.
+Android uses the vendored AndroidLiquidGlass renderer. iOS uses native UIKit
+controls through Compose interop.
 
 ## Controls
 
@@ -113,6 +46,87 @@ LiquidSegmentedControl(
 )
 ```
 
+## Bottom Navigation
+
+```kotlin
+val items = listOf(
+    LiquidNavigationItem("home", "Home", LiquidIcon(Icons.Rounded.Home)),
+    LiquidNavigationItem("search", "Search", LiquidIcon(Icons.Rounded.Search)),
+    LiquidNavigationItem("settings", "Settings", LiquidIcon(Icons.Rounded.Settings)),
+)
+
+LiquidBottomNavigation(
+    items = items,
+    selectedKey = currentTab,
+    onSelected = { currentTab = it },
+)
+```
+
+Use `LiquidTabScaffold` when you want LiquidGlass to hold the selected tab:
+
+```kotlin
+LiquidTabScaffold(items = items) { selectedTab ->
+    when (selectedTab) {
+        "home" -> HomeScreen()
+        "search" -> SearchScreen()
+        "settings" -> SettingsScreen()
+    }
+}
+```
+
+## Navigation 3 Tabs
+
+Use `liquidkit-navigation3` when Compose owns bottom-navigation tab stacks.
+LiquidGlass handles the tab stacks; you still use normal `NavDisplay`.
+
+```kotlin
+val state = rememberLiquidNav3State(
+    topLevelRoutes = listOf(HomeRoute, SearchRoute),
+    savedStateConfiguration = nav3SavedStateConfiguration,
+)
+val navEntries = rememberLiquidNav3Entries(
+    state = state,
+    entryProvider = entries,
+)
+
+Box {
+    NavDisplay(
+        entries = navEntries,
+        onBack = { state.pop() },
+        modifier = Modifier.matchParentSize(),
+    )
+
+    LiquidBottomNavigation(
+        items = items,
+        selectedKey = state.selectedTopLevelRoute,
+        onSelected = state::selectTopLevel,
+    )
+}
+```
+
+Or use the ready-made bottom-tab shell:
+
+```kotlin
+val items = listOf(
+    LiquidNavigationItem(HomeRoute, "Home", homeIcon),
+    LiquidNavigationItem(SearchRoute, "Search", searchIcon),
+)
+
+val entries = entryProvider<NavKey> {
+    entry<HomeRoute> { HomeScreen() }
+    entry<SearchRoute> { SearchScreen() }
+}
+
+LiquidNav3TabScaffold(
+    items = items,
+    savedStateConfiguration = nav3SavedStateConfiguration,
+    entryProvider = entries,
+)
+```
+
+iOS 26 apps that want native Liquid Glass tabs should keep `TabView` in SwiftUI
+and host Compose screens inside each tab.
+
 ## Build
 
 ```bash
@@ -137,7 +151,7 @@ iosApp/LiquidKitSample.xcodeproj
 
 ## Credits
 
-LiquidKit's Android renderer includes source from
+LiquidGlass's Android renderer includes source from
 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass).
 
 The optional Navigation 3 tab helper is adapted from the multiple-back-stack

@@ -17,4 +17,5 @@ dependencyResolutionManagement {
 rootProject.name = "LiquidKit"
 
 include(":liquidkit")
+include(":liquidkit-navigation3")
 include(":sampleApp")

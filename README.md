@@ -24,6 +24,7 @@ io.github.androidpoet.liquidkit
 - `LiquidSegmentedControl`
 - `LiquidBottomNavigation`
 - `LiquidNavigationScaffold`
+- `LiquidNav3TabScaffold` from the optional `liquidkit-navigation3` module
 
 ## Architecture
 
@@ -42,6 +43,9 @@ behind platform source sets.
 - Apps with Navigation 3, SwiftUI navigation, or another router should use
   `LiquidBottomNavigation` as controlled UI and keep the route stack in the app
   layer.
+- Apps that use Navigation 3 tab stacks can use the optional
+  `liquidkit-navigation3` helper module to hide the multiple-back-stack
+  boilerplate.
 
 See [Navigation Interop](docs/navigation-interop.md) for the detailed
 Navigation 3 and iOS 26 ownership model.
@@ -51,13 +55,14 @@ Navigation 3 and iOS 26 ownership model.
 ```text
 .
 ├── liquidkit/        # Public Kotlin Multiplatform library
-├── sampleApp/        # Shared Android/iOS Compose sample
-├── iosApp/           # Native SwiftUI shell for the iOS sample
-├── buildSrc/         # Shared Gradle build constants
-├── docs/             # Architecture and integration notes
-├── scripts/          # Reusable Gradle publishing scripts
-├── .github/          # CI, publish verification, templates, ownership
-└── gradle/           # Version catalog and Gradle wrapper files
+├── liquidkit-navigation3/  # Optional Navigation 3 helper module
+├── sampleApp/              # Shared Android/iOS Compose sample
+├── iosApp/                 # Native SwiftUI shell for the iOS sample
+├── buildSrc/               # Shared Gradle build constants
+├── docs/                   # Architecture and integration notes
+├── scripts/                # Reusable Gradle publishing scripts
+├── .github/                # CI, publish verification, templates, ownership
+└── gradle/                 # Version catalog and Gradle wrapper files
 ```
 
 ## Sample App
@@ -71,9 +76,11 @@ Common Compose sample:
   `LiquidSegmentedControl`;
 - uses safe drawing padding so iOS content does not hide under the status bar;
 - uses Navigation 3 for bottom-navigation multiple-stack behavior;
-- keeps one `rememberNavBackStack` per top-level tab;
-- renders routes through `NavDisplay`;
-- drives tab changes through `LiquidBottomNavigation`.
+- uses `LiquidNav3TabScaffold` so the demo does not expose Nav3
+  multiple-back-stack boilerplate;
+- keeps one `rememberNavBackStack` per top-level tab inside the helper;
+- renders routes through `NavDisplay` inside the helper;
+- drives tab changes through LiquidKit bottom navigation.
 
 iOS sample shell:
 
@@ -85,21 +92,53 @@ iOS sample shell:
 
 ## Navigation 3 Bottom Navigation
 
-LiquidKit does not depend on Navigation 3 in the library module. The sample app
-depends on Navigation 3 to show how a real app should integrate it.
+Core LiquidKit does not depend on Navigation 3. Apps that want the easy
+Navigation 3 tab-stack API can depend on `liquidkit-navigation3`.
 
 The pattern is adapted from
 [`terrakok/nav3-recipes`](https://github.com/terrakok/nav3-recipes):
 
 1. Define top-level route objects that implement `NavKey`.
-2. Create one `rememberNavBackStack` for each top-level route.
-3. Keep the selected top-level route outside the stack.
-4. Use `LiquidBottomNavigation(selectedKey, onSelected)` to switch tabs.
-5. Use `NavDisplay` to render decorated entries from the active stack.
-6. Push detail routes into the current tab's stack so each tab retains its own
-   forward screen state.
+2. Create `LiquidNav3Tab` values for those routes.
+3. Create a `SavedStateConfiguration` for route serialization.
+4. Render `LiquidNav3TabScaffold`.
+5. Push detail routes through `LiquidNav3TabState.navigate`.
 
 This keeps LiquidKit as a UI library and keeps navigation ownership in the app.
+
+```kotlin
+val tabs = listOf(
+    LiquidNav3Tab(
+        root = HomeRoute,
+        item = LiquidNavigationItem(HomeRoute, "Home", homeIcon),
+    ),
+    LiquidNav3Tab(
+        root = SearchRoute,
+        item = LiquidNavigationItem(SearchRoute, "Search", searchIcon),
+    ),
+)
+
+val state = rememberLiquidNav3TabState(
+    tabs = tabs,
+    startRoute = HomeRoute,
+    savedStateConfiguration = nav3SavedStateConfiguration,
+)
+
+val entries = entryProvider<NavKey> {
+    entry<HomeRoute> {
+        HomeScreen(onOpenDetail = { state.navigate(HomeDetailRoute) })
+    }
+    entry<HomeDetailRoute> {
+        HomeDetailScreen(onBack = state::goBack)
+    }
+}
+
+LiquidNav3TabScaffold(
+    tabs = tabs,
+    state = state,
+    entryProvider = entries,
+)
+```
 
 ## iOS 26 Liquid Glass Navigation
 
@@ -185,6 +224,7 @@ Compile the library and sample targets:
 
 ```bash
 ./gradlew :liquidkit:check \
+  :liquidkit-navigation3:check \
   :sampleApp:compileDebugKotlinAndroid \
   :sampleApp:compileKotlinIosSimulatorArm64 \
   :sampleApp:compileKotlinIosArm64
@@ -193,7 +233,8 @@ Compile the library and sample targets:
 Build local publications:
 
 ```bash
-./gradlew :liquidkit:publishAllPublicationsToLocalBuildRepository
+./gradlew :liquidkit:publishAllPublicationsToLocalBuildRepository \
+  :liquidkit-navigation3:publishAllPublicationsToLocalBuildRepository
 ```
 
 Install the Android sample:
@@ -246,7 +287,8 @@ publishing still needs repository credentials and final release configuration.
 
 ## Dependency Notes
 
-Navigation 3 is intentionally scoped to `sampleApp`.
+Navigation 3 is intentionally scoped to the optional `liquidkit-navigation3`
+module and the sample app. Core `liquidkit` has no Navigation 3 dependency.
 
 The sample uses:
 

@@ -1,6 +1,6 @@
 .gradle/
 .kotlin/
-build/
-**/build/
+/build/
+/*/build/
 iosApp/DerivedData/
 local.properties

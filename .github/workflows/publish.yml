@@ -23,4 +23,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build library publications
-        run: ./gradlew :liquidkit:publishAllPublicationsToLocalBuildRepository --stacktrace
+        run: ./gradlew :liquidkit:publishAllPublicationsToLocalBuildRepository :liquidkit-navigation3:publishAllPublicationsToLocalBuildRepository --stacktrace

@@ -1,11 +1,20 @@
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 
+val publicationName = when (project.name) {
+    "liquidkit-navigation3" -> "LiquidKit Navigation 3"
+    else -> "LiquidKit"
+}
+val publicationDescription = when (project.name) {
+    "liquidkit-navigation3" -> "Optional Navigation 3 tab-stack helpers for LiquidKit."
+    else -> "A Kotlin Multiplatform component kit for Liquid Glass UI."
+}
+
 configure<PublishingExtension> {
     publications.withType<MavenPublication>().configureEach {
         pom {
-            name.set("LiquidKit")
-            description.set("A Kotlin Multiplatform component kit for Liquid Glass UI.")
+            name.set(publicationName)
+            description.set(publicationDescription)
             url.set("https://github.com/AndroidPoet/LiquidKit")
 
             licenses {

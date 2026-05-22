@@ -24,38 +24,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.androidpoet.liquidkit.icon.LiquidIcon
-import io.github.androidpoet.liquidkit.navigation.LiquidBottomNavigation
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
+import io.github.androidpoet.liquidkit.navigation3.LiquidNav3Tab
+import io.github.androidpoet.liquidkit.navigation3.LiquidNav3TabScaffold
+import io.github.androidpoet.liquidkit.navigation3.rememberLiquidNav3TabState
 import io.github.androidpoet.liquidkit.segmented.LiquidSegment
 import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
 import io.github.androidpoet.liquidkit.slider.LiquidSlider
 import io.github.androidpoet.liquidkit.toggle.LiquidToggle
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberDecoratedNavEntries
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.ui.NavDisplay
-import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 import androidx.savedstate.serialization.SavedStateConfiguration
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -72,73 +64,65 @@ public enum class LiquidKitSampleTab(
 
 @Composable
 fun LiquidKitSampleApp(modifier: Modifier = Modifier) {
-    val navigationState = rememberLiquidKitNav3NavigationState(
+    val tabs = rememberLiquidKitNav3Tabs()
+    val navigationState = rememberLiquidNav3TabState(
+        tabs = tabs,
         startRoute = LiquidKitHomeRoute,
-        topLevelRoutes = liquidKitNav3TopLevelRoutes,
+        savedStateConfiguration = liquidKitNav3SavedStateConfiguration,
     )
-    val navigator = remember(navigationState) { LiquidKitNav3Navigator(navigationState) }
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider<NavKey> {
         entry<LiquidKitHomeRoute> {
             LiquidKitNav3TabRoot(
                 selectedTab = LiquidKitSampleTab.Home,
-                onNext = { navigator.navigate(LiquidKitHomeDetailRoute) },
+                onNext = { navigationState.navigate(LiquidKitHomeDetailRoute) },
             )
         }
         entry<LiquidKitSearchRoute> {
             LiquidKitNav3TabRoot(
                 selectedTab = LiquidKitSampleTab.Search,
-                onNext = { navigator.navigate(LiquidKitSearchDetailRoute) },
+                onNext = { navigationState.navigate(LiquidKitSearchDetailRoute) },
             )
         }
         entry<LiquidKitSettingsRoute> {
             LiquidKitNav3TabRoot(
                 selectedTab = LiquidKitSampleTab.Settings,
-                onNext = { navigator.navigate(LiquidKitSettingsDetailRoute) },
+                onNext = { navigationState.navigate(LiquidKitSettingsDetailRoute) },
             )
         }
         entry<LiquidKitHomeDetailRoute> {
             LiquidKitNav3DetailScreen(
                 selectedTab = LiquidKitSampleTab.Home,
                 title = "Home Detail",
-                onBack = navigator::goBack,
+                onBack = navigationState::goBack,
             )
         }
         entry<LiquidKitSearchDetailRoute> {
             LiquidKitNav3DetailScreen(
                 selectedTab = LiquidKitSampleTab.Search,
                 title = "Search Detail",
-                onBack = navigator::goBack,
+                onBack = navigationState::goBack,
             )
         }
         entry<LiquidKitSettingsDetailRoute> {
             LiquidKitNav3DetailScreen(
                 selectedTab = LiquidKitSampleTab.Settings,
                 title = "Settings Detail",
-                onBack = navigator::goBack,
+                onBack = navigationState::goBack,
             )
         }
     }
 
-    androidx.compose.foundation.layout.Box(
+    LiquidNav3TabScaffold(
+        tabs = tabs,
+        state = navigationState,
+        entryProvider = entryProvider,
         modifier = modifier
             .fillMaxSize()
             .background(sampleBackground()),
-    ) {
-        NavDisplay(
-            entries = navigationState.toEntries(entryProvider),
-            onBack = navigator::goBack,
-            modifier = Modifier.fillMaxSize(),
-        )
-        LiquidBottomNavigation(
-            items = rememberLiquidKitNav3NavigationItems(),
-            selectedKey = navigationState.topLevelRoute,
-            onSelected = navigator::navigate,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(16.dp),
-        )
-    }
+        navigationModifier = Modifier
+            .navigationBarsPadding()
+            .padding(16.dp),
+    )
 }
 
 @Composable
@@ -254,129 +238,50 @@ private val liquidKitNav3SavedStateConfiguration = SavedStateConfiguration {
     }
 }
 
-private val liquidKitNav3TopLevelRoutes: Set<NavKey> = linkedSetOf(
-    LiquidKitHomeRoute,
-    LiquidKitSearchRoute,
-    LiquidKitSettingsRoute,
-)
-
 @Composable
-private fun rememberLiquidKitNav3NavigationItems(): List<LiquidNavigationItem<NavKey>> =
+private fun rememberLiquidKitNav3Tabs(): List<LiquidNav3Tab> =
     remember {
         listOf(
-            LiquidNavigationItem(
-                key = LiquidKitHomeRoute,
-                label = LiquidKitSampleTab.Home.title,
-                icon = LiquidIcon(
-                    imageVector = SampleIcons.Home,
-                    contentDescription = LiquidKitSampleTab.Home.title,
-                    iosSystemName = LiquidKitSampleTab.Home.iosSystemImage,
-                    selectedIosSystemName = "house.fill",
+            LiquidNav3Tab(
+                root = LiquidKitHomeRoute,
+                item = LiquidNavigationItem(
+                    key = LiquidKitHomeRoute,
+                    label = LiquidKitSampleTab.Home.title,
+                    icon = LiquidIcon(
+                        imageVector = SampleIcons.Home,
+                        contentDescription = LiquidKitSampleTab.Home.title,
+                        iosSystemName = LiquidKitSampleTab.Home.iosSystemImage,
+                        selectedIosSystemName = "house.fill",
+                    ),
                 ),
             ),
-            LiquidNavigationItem(
-                key = LiquidKitSearchRoute,
-                label = LiquidKitSampleTab.Search.title,
-                icon = LiquidIcon(
-                    imageVector = SampleIcons.Controls,
-                    contentDescription = LiquidKitSampleTab.Search.title,
-                    iosSystemName = LiquidKitSampleTab.Search.iosSystemImage,
+            LiquidNav3Tab(
+                root = LiquidKitSearchRoute,
+                item = LiquidNavigationItem(
+                    key = LiquidKitSearchRoute,
+                    label = LiquidKitSampleTab.Search.title,
+                    icon = LiquidIcon(
+                        imageVector = SampleIcons.Controls,
+                        contentDescription = LiquidKitSampleTab.Search.title,
+                        iosSystemName = LiquidKitSampleTab.Search.iosSystemImage,
+                    ),
                 ),
             ),
-            LiquidNavigationItem(
-                key = LiquidKitSettingsRoute,
-                label = LiquidKitSampleTab.Settings.title,
-                icon = LiquidIcon(
-                    imageVector = SampleIcons.Menu,
-                    contentDescription = LiquidKitSampleTab.Settings.title,
-                    iosSystemName = LiquidKitSampleTab.Settings.iosSystemImage,
-                    selectedIosSystemName = "gearshape.fill",
+            LiquidNav3Tab(
+                root = LiquidKitSettingsRoute,
+                item = LiquidNavigationItem(
+                    key = LiquidKitSettingsRoute,
+                    label = LiquidKitSampleTab.Settings.title,
+                    icon = LiquidIcon(
+                        imageVector = SampleIcons.Menu,
+                        contentDescription = LiquidKitSampleTab.Settings.title,
+                        iosSystemName = LiquidKitSampleTab.Settings.iosSystemImage,
+                        selectedIosSystemName = "gearshape.fill",
+                    ),
                 ),
             ),
         )
     }
-
-@Composable
-private fun rememberLiquidKitNav3NavigationState(
-    startRoute: NavKey,
-    topLevelRoutes: Set<NavKey>,
-): LiquidKitNav3NavigationState {
-    val topLevelRoute = rememberSerializable(
-        startRoute,
-        topLevelRoutes,
-        configuration = liquidKitNav3SavedStateConfiguration,
-        serializer = MutableStateSerializer(PolymorphicSerializer(NavKey::class)),
-    ) {
-        mutableStateOf(startRoute)
-    }
-    val backStacks = topLevelRoutes.associateWith { route ->
-        rememberNavBackStack(liquidKitNav3SavedStateConfiguration, route)
-    }
-
-    return remember(startRoute, topLevelRoutes) {
-        LiquidKitNav3NavigationState(
-            startRoute = startRoute,
-            topLevelRoute = topLevelRoute,
-            backStacks = backStacks,
-        )
-    }
-}
-
-private class LiquidKitNav3NavigationState(
-    val startRoute: NavKey,
-    topLevelRoute: androidx.compose.runtime.MutableState<NavKey>,
-    val backStacks: Map<NavKey, NavBackStack<NavKey>>,
-) {
-    var topLevelRoute: NavKey by topLevelRoute
-
-    val stacksInUse: List<NavKey>
-        get() = if (topLevelRoute == startRoute) {
-            listOf(startRoute)
-        } else {
-            listOf(startRoute, topLevelRoute)
-        }
-}
-
-private class LiquidKitNav3Navigator(
-    private val state: LiquidKitNav3NavigationState,
-) {
-    fun navigate(route: NavKey) {
-        if (route in state.backStacks.keys) {
-            state.topLevelRoute = route
-        } else {
-            state.backStacks[state.topLevelRoute]?.add(route)
-        }
-    }
-
-    fun goBack() {
-        val currentStack = state.backStacks[state.topLevelRoute]
-            ?: error("Stack for ${state.topLevelRoute} not found.")
-        val currentRoute = currentStack.last()
-
-        if (currentRoute == state.topLevelRoute) {
-            state.topLevelRoute = state.startRoute
-        } else {
-            currentStack.removeLastOrNull()
-        }
-    }
-}
-
-@Composable
-private fun LiquidKitNav3NavigationState.toEntries(
-    entryProvider: (NavKey) -> NavEntry<NavKey>,
-): SnapshotStateList<NavEntry<NavKey>> {
-    val decoratedEntries = backStacks.mapValues { (_, stack) ->
-        rememberDecoratedNavEntries(
-            backStack = stack,
-            entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator<NavKey>()),
-            entryProvider = entryProvider,
-        )
-    }
-
-    return stacksInUse
-        .flatMap { decoratedEntries[it] ?: emptyList() }
-        .toMutableStateList()
-}
 
 @Composable
 private fun LiquidKitNav3TabRoot(

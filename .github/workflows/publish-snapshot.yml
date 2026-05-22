@@ -1,8 +1,6 @@
 name: Publish Snapshot
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -27,4 +25,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Publish to local Maven repository
-        run: ./gradlew :liquidkit:publishToMavenLocal --stacktrace
+        run: ./gradlew :liquidkit:publishToMavenLocal :liquidkit-navigation3:publishToMavenLocal --stacktrace

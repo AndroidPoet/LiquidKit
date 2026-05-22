@@ -1,10 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -27,8 +24,8 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Check library
-        run: ./gradlew :liquidkit:check --stacktrace
+      - name: Check libraries
+        run: ./gradlew :liquidkit:check :liquidkit-navigation3:check --stacktrace
 
       - name: Compile Android sample
         run: ./gradlew :sampleApp:compileDebugKotlinAndroid --stacktrace

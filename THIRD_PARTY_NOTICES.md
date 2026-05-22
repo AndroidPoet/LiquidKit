@@ -39,6 +39,7 @@ The adapted sample code lives in:
 sampleApp/src/commonMain/kotlin/io/github/androidpoet/liquidkit/sample/LiquidKitSampleApp.kt
 ```
 
-LiquidKit does not expose Navigation 3 from the library module. The dependency
-is scoped to the sample app to demonstrate how `LiquidBottomNavigation` can be
-used as controlled UI while Navigation 3 owns the app's back stacks.
+Core LiquidKit does not expose Navigation 3 from the library module. The
+optional `liquidkit-navigation3` module demonstrates how LiquidKit bottom
+navigation can be used as controlled UI while Navigation 3 owns the app's back
+stacks.

@@ -4,11 +4,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlinx.serialization)
+    id("maven-publish")
 }
+
+apply(from = "$rootDir/scripts/publish-module.gradle.kts")
 
 kotlin {
     androidTarget {
@@ -22,16 +25,15 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":liquidkit"))
-            implementation(project(":liquidkit-navigation3"))
+            api(project(":liquidkit"))
+            api(libs.jetbrains.navigation3.ui)
+            api(compose.runtime)
+            api(compose.ui)
             implementation(compose.foundation)
-            implementation(compose.runtime)
-            implementation(compose.ui)
         }
 
-        androidMain.dependencies {
-            implementation(libs.activity.compose)
-            implementation(libs.androidx.core.ktx)
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 
@@ -40,26 +42,18 @@ kotlin {
         .matching { it.konanTarget.family.isAppleFamily }
         .configureEach {
             binaries.framework {
-                baseName = LiquidKitConfiguration.sampleFrameworkName
+                baseName = "${LiquidKitConfiguration.libraryFrameworkName}Navigation3"
                 isStatic = true
             }
         }
 }
 
 android {
-    namespace = LiquidKitConfiguration.sampleNamespace
+    namespace = LiquidKitConfiguration.navigation3Namespace
     compileSdk = LiquidKitConfiguration.compileSdk
 
     defaultConfig {
-        applicationId = LiquidKitConfiguration.sampleApplicationId
         minSdk = LiquidKitConfiguration.minSdk
-        targetSdk = LiquidKitConfiguration.targetSdk
-        versionCode = LiquidKitConfiguration.sampleVersionCode
-        versionName = LiquidKitConfiguration.sampleVersionName
-    }
-
-    buildFeatures {
-        compose = true
     }
 
     compileOptions {

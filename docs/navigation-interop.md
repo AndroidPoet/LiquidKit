@@ -26,6 +26,23 @@ notify an external route owner through `onSelected`, but apps with full Nav3
 back-stack ownership should prefer the lower-level `LiquidBottomNavigation`
 when they need custom root/detail stack behavior.
 
+For the common multiple-tab-stack case, use the optional
+`liquidkit-navigation3` module instead of copying Nav3 boilerplate into the app:
+
+```kotlin
+val state = rememberLiquidNav3TabState(
+    tabs = tabs,
+    startRoute = HomeRoute,
+    savedStateConfiguration = nav3SavedStateConfiguration,
+)
+
+LiquidNav3TabScaffold(
+    tabs = tabs,
+    state = state,
+    entryProvider = entryProvider,
+)
+```
+
 The sample app uses this shape, adapted from `terrakok/nav3-recipes` multiple
 stacks:
 

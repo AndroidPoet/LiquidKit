@@ -24,5 +24,6 @@ internal actual fun PlatformLiquidToggle(
         onSelect = { if (enabled) onCheckedChange(it) },
         backdrop = backdrop,
         modifier = modifier.alpha(if (enabled) 1f else 0.42f),
+        enabled = enabled,
     )
 }

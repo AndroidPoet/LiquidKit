@@ -1,5 +1,6 @@
 package io.github.androidpoet.liquidkit.internal.androidglass.catalog.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -49,7 +50,8 @@ fun LiquidToggle(
     selected: () -> Boolean,
     onSelect: (Boolean) -> Unit,
     backdrop: Backdrop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val isLightTheme = !isSystemInDarkTheme()
     val accentColor =
@@ -113,6 +115,11 @@ fun LiquidToggle(
     }
 
     val trackBackdrop = rememberLayerBackdrop()
+    fun toggle() {
+        val isSelected = !selected()
+        fraction = if (isSelected) 1f else 0f
+        onSelect(isSelected)
+    }
 
     Box(
         modifier,
@@ -122,6 +129,13 @@ fun LiquidToggle(
             Modifier
                 .layerBackdrop(trackBackdrop)
                 .clip(Capsule())
+                .clickable(
+                    interactionSource = null,
+                    indication = null,
+                    enabled = enabled,
+                    role = Role.Switch,
+                    onClick = ::toggle,
+                )
                 .drawBehind {
                     val fraction = dampedDragAnimation.value
                     drawRect(lerp(trackColor, accentColor, fraction))

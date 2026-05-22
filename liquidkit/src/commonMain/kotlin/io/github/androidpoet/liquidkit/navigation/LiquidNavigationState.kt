@@ -35,6 +35,7 @@ public fun <T : Any> LiquidNavigationScaffold(
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
+    onSelected: (T) -> Unit = {},
     content: @Composable BoxScope.(selectedKey: T) -> Unit,
 ) {
     require(items.isNotEmpty()) { "LiquidNavigationScaffold requires at least one item." }
@@ -47,6 +48,7 @@ public fun <T : Any> LiquidNavigationScaffold(
         modifier = modifier,
         navigationModifier = navigationModifier,
         style = style,
+        onSelected = onSelected,
         content = content,
     )
 }
@@ -58,6 +60,7 @@ public fun <T : Any> LiquidNavigationScaffold(
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
+    onSelected: (T) -> Unit = {},
     content: @Composable BoxScope.(selectedKey: T) -> Unit,
 ) {
     require(items.isNotEmpty()) { "LiquidNavigationScaffold requires at least one item." }
@@ -67,7 +70,10 @@ public fun <T : Any> LiquidNavigationScaffold(
         LiquidBottomNavigation(
             items = items,
             selectedKey = state.selectedKey,
-            onSelected = state::navigate,
+            onSelected = { key ->
+                state.navigate(key)
+                onSelected(key)
+            },
             modifier = navigationModifier.align(Alignment.BottomCenter),
             style = style,
         )

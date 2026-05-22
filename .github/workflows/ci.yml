@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build KMP targets
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Check library
+        run: ./gradlew :liquidkit:check --stacktrace
+
+      - name: Compile Android sample
+        run: ./gradlew :sampleApp:compileDebugKotlinAndroid --stacktrace
+
+      - name: Compile iOS sample
+        run: ./gradlew :sampleApp:compileKotlinIosSimulatorArm64 --stacktrace

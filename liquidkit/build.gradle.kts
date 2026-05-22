@@ -7,7 +7,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
+    id("maven-publish")
 }
+
+apply(from = "$rootDir/scripts/publish-module.gradle.kts")
 
 kotlin {
     compilerOptions {

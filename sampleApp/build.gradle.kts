@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -16,7 +17,6 @@ kotlin {
         }
     }
 
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
 
@@ -26,6 +26,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.runtime)
             implementation(compose.ui)
+            implementation(libs.jetbrains.navigation3.ui)
         }
 
         androidMain.dependencies {

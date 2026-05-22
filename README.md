@@ -30,6 +30,18 @@ behind a single platform surface.
   only needs tab switching. Full iOS 26 `TabView`/`NavigationStack` ownership
   still belongs in the native app shell when the app needs Apple's system
   Liquid Glass navigation behavior.
+- For Navigation 3 or native iOS navigation interop, keep the app route stack in
+  the app layer and use LiquidKit navigation components as controlled UI. See
+  [Navigation Interop](docs/navigation-interop.md).
+
+## Project Structure
+
+- `liquidkit`: public Kotlin Multiplatform library published as `LiquidKit`.
+- `sampleApp`: shared Compose sample for Android and iOS.
+- `iosApp`: native SwiftUI shell that hosts the exported Kotlin sample views.
+- `buildSrc`: shared build constants used by Gradle modules.
+- `.github`: CI, publishing verification, issue templates, and ownership files.
+- `scripts`: reusable Gradle scripts for publication metadata.
 
 ## Sample App
 

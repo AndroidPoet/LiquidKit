@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "description": "Keep Kotlin, Compose, and Android Gradle Plugin updates together",
+      "groupName": "Kotlin, Compose, and AGP",
+      "matchPackageNames": [
+        "com.android.tools.build:gradle",
+        "org.jetbrains.kotlin.multiplatform",
+        "org.jetbrains.kotlin.plugin.compose",
+        "org.jetbrains.compose"
+      ],
+      "matchPackagePatterns": ["^org\\.jetbrains\\.kotlin"]
+    },
+    {
+      "description": "Automatically merge safe minor and patch updates",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true,
+      "automergeType": "pr"
+    }
+  ]
+}

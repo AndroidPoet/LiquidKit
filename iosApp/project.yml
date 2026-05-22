@@ -5,10 +5,7 @@ options:
     iOS: "17.2"
 settings:
   base:
-    CODE_SIGNING_ALLOWED: "NO"
     DEVELOPMENT_TEAM: ""
-    FRAMEWORK_SEARCH_PATHS:
-      - "$(SRCROOT)/../sampleApp/build/bin/iosSimulatorArm64/debugFramework"
     LD_RUNPATH_SEARCH_PATHS:
       - "$(inherited)"
       - "@executable_path/Frameworks"
@@ -19,13 +16,20 @@ targets:
     sources:
       - LiquidKitSample
     dependencies:
-      - framework: ../sampleApp/build/bin/iosSimulatorArm64/debugFramework/LiquidKitSample.framework
+      - framework: ../sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework
+        embed: false
     preBuildScripts:
-      - name: Build Kotlin Framework
+      - name: Build Kotlin XCFramework
         basedOnDependencyAnalysis: false
         script: |
           cd "$SRCROOT/.."
-          gradle :sampleApp:linkDebugFrameworkIosSimulatorArm64
+          gradle :sampleApp:linkDebugFrameworkIosArm64 :sampleApp:linkDebugFrameworkIosSimulatorArm64
+          rm -rf sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework
+          mkdir -p sampleApp/build/XCFrameworks/debug
+          xcodebuild -create-xcframework \
+            -framework sampleApp/build/bin/iosArm64/debugFramework/LiquidKitSample.framework \
+            -framework sampleApp/build/bin/iosSimulatorArm64/debugFramework/LiquidKitSample.framework \
+            -output sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework
     settings:
       base:
         PRODUCT_NAME: LiquidKitSampleIOS

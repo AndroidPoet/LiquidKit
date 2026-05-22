@@ -8,32 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		1E0704BC27200091CD567C3A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECC0B989F71DA24F04C1B1E /* ContentView.swift */; };
-		21FA6CC78DBC819A8DC67396 /* LiquidKitSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0E565E7BDE217BB4F4942F6 /* LiquidKitSample.framework */; };
 		393F6EA678B02FD87E0AD1D0 /* LiquidKitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82EC324A2D56B0CCC78B9703 /* LiquidKitSampleApp.swift */; };
-		411EDF40A602073BD37B48EC /* LiquidKitSample.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0E565E7BDE217BB4F4942F6 /* LiquidKitSample.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5ABA4F88FD843CEB97852D2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0333DC61E2469B1AA0044EF /* Assets.xcassets */; };
+		85210646D05E6010C4AF76EB /* LiquidKitSample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D0E9904A217D5355508B3CB /* LiquidKitSample.xcframework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		F655C11AA79897824FAAF46E /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				411EDF40A602073BD37B48EC /* LiquidKitSample.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		3D0E9904A217D5355508B3CB /* LiquidKitSample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = LiquidKitSample.xcframework; path = ../sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework; sourceTree = "<group>"; };
 		3ECC0B989F71DA24F04C1B1E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4DEF3B1A0362EDBA3F05AE9E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		82EC324A2D56B0CCC78B9703 /* LiquidKitSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidKitSampleApp.swift; sourceTree = "<group>"; };
 		BF3FD00BF1A61A119B16A115 /* LiquidKitSampleIOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LiquidKitSampleIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0E565E7BDE217BB4F4942F6 /* LiquidKitSample.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LiquidKitSample.framework; path = ../sampleApp/build/bin/iosSimulatorArm64/debugFramework/LiquidKitSample.framework; sourceTree = "<group>"; };
 		D0333DC61E2469B1AA0044EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -42,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				21FA6CC78DBC819A8DC67396 /* LiquidKitSample.framework in Frameworks */,
+				85210646D05E6010C4AF76EB /* LiquidKitSample.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,7 +65,7 @@
 		8A46E946AA4F68843AA9F739 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C0E565E7BDE217BB4F4942F6 /* LiquidKitSample.framework */,
+				3D0E9904A217D5355508B3CB /* LiquidKitSample.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -92,11 +77,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0AB946D06EF24A7853214926 /* Build configuration list for PBXNativeTarget "LiquidKitSampleIOS" */;
 			buildPhases = (
-				EC659F832AB72C537F07C8A3 /* Build Kotlin Framework */,
+				D5A67AA073A8364654A0E60C /* Build Kotlin XCFramework */,
 				FB90B69241A4A50C2E3B1286 /* Sources */,
 				7AEE3762CB28C1EBBB9F05C4 /* Resources */,
 				A4CE50BCA265B9B2DB5D0F85 /* Frameworks */,
-				F655C11AA79897824FAAF46E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -154,7 +138,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		EC659F832AB72C537F07C8A3 /* Build Kotlin Framework */ = {
+		D5A67AA073A8364654A0E60C /* Build Kotlin XCFramework */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -164,14 +148,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Build Kotlin Framework";
+			name = "Build Kotlin XCFramework";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\ngradle :sampleApp:linkDebugFrameworkIosSimulatorArm64\n";
+			shellScript = "cd \"$SRCROOT/..\"\ngradle :sampleApp:linkDebugFrameworkIosArm64 :sampleApp:linkDebugFrameworkIosSimulatorArm64\nrm -rf sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework\nmkdir -p sampleApp/build/XCFrameworks/debug\nxcodebuild -create-xcframework \\\n  -framework sampleApp/build/bin/iosArm64/debugFramework/LiquidKitSample.framework \\\n  -framework sampleApp/build/bin/iosSimulatorArm64/debugFramework/LiquidKitSample.framework \\\n  -output sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -221,15 +205,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_ALLOWED = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/../sampleApp/build/bin/iosSimulatorArm64/debugFramework",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -268,7 +248,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"../sampleApp/build/bin/iosSimulatorArm64/debugFramework\"",
+					"\"../sampleApp/build/XCFrameworks/debug\"",
 				);
 				INFOPLIST_FILE = LiquidKitSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -318,15 +298,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_ALLOWED = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/../sampleApp/build/bin/iosSimulatorArm64/debugFramework",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -358,7 +334,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"../sampleApp/build/bin/iosSimulatorArm64/debugFramework\"",
+					"\"../sampleApp/build/XCFrameworks/debug\"",
 				);
 				INFOPLIST_FILE = LiquidKitSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

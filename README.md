@@ -2,25 +2,25 @@
 
 LiquidGlass is a Kotlin Multiplatform component kit for Liquid Glass-style UI.
 
-Current Maven/module coordinates still use `liquidkit` until a deliberate
-breaking rename is made.
+Android renders with the vendored AndroidLiquidGlass engine. iOS renders with
+native UIKit controls through Compose interop.
+
+> Maven/module coordinates still use `liquidkit` until a deliberate breaking
+> rename is made.
 
 ```kotlin
 io.github.androidpoet.liquidkit
 io.github.androidpoet.liquidkit.navigation3 // optional
 ```
 
-## What You Get
+## Components
 
 - `LiquidToggle`
 - `LiquidSlider`
 - `LiquidSegmentedControl`
 - `LiquidBottomNavigation`
 - `LiquidTabScaffold`
-- Optional Navigation 3 helpers for bottom-navigation tab stacks
-
-Android uses the vendored AndroidLiquidGlass renderer. iOS uses native UIKit
-controls through Compose interop.
+- `LiquidNav3TabScaffold` from the optional Navigation 3 module
 
 ## Controls
 
@@ -62,7 +62,7 @@ LiquidBottomNavigation(
 )
 ```
 
-Use `LiquidTabScaffold` when you want LiquidGlass to hold the selected tab:
+Use `LiquidTabScaffold` when LiquidGlass should hold the selected tab:
 
 ```kotlin
 LiquidTabScaffold(items = items) { selectedTab ->
@@ -74,16 +74,17 @@ LiquidTabScaffold(items = items) { selectedTab ->
 }
 ```
 
-## Navigation 3 Tabs
+## Navigation 3
 
-Use `liquidkit-navigation3` when Compose owns bottom-navigation tab stacks.
-LiquidGlass handles the tab stacks; you still use normal `NavDisplay`.
+Use `liquidkit-navigation3` only for Compose-owned bottom-navigation tab stacks.
+LiquidGlass handles the multiple back stacks; your app still owns `NavDisplay`.
 
 ```kotlin
 val state = rememberLiquidNav3State(
     topLevelRoutes = listOf(HomeRoute, SearchRoute),
     savedStateConfiguration = nav3SavedStateConfiguration,
 )
+
 val navEntries = rememberLiquidNav3Entries(
     state = state,
     entryProvider = entries,
@@ -104,19 +105,9 @@ Box {
 }
 ```
 
-Or use the ready-made bottom-tab shell:
+For the common case, use the ready-made scaffold:
 
 ```kotlin
-val items = listOf(
-    LiquidNavigationItem(HomeRoute, "Home", homeIcon),
-    LiquidNavigationItem(SearchRoute, "Search", searchIcon),
-)
-
-val entries = entryProvider<NavKey> {
-    entry<HomeRoute> { HomeScreen() }
-    entry<SearchRoute> { SearchScreen() }
-}
-
 LiquidNav3TabScaffold(
     items = items,
     savedStateConfiguration = nav3SavedStateConfiguration,
@@ -124,26 +115,22 @@ LiquidNav3TabScaffold(
 )
 ```
 
-iOS 26 apps that want native Liquid Glass tabs should keep `TabView` in SwiftUI
-and host Compose screens inside each tab.
+For native iOS 26 Liquid Glass tabs, keep `TabView` in SwiftUI and host Compose
+screens inside each tab.
 
 ## Build
 
 ```bash
-./gradlew :liquidkit:check \
-  :liquidkit-navigation3:check \
-  :sampleApp:compileDebugKotlinAndroid \
-  :sampleApp:compileKotlinIosSimulatorArm64 \
-  :sampleApp:compileKotlinIosArm64
+./gradlew :liquidkit:check :liquidkit-navigation3:check
 ```
 
-Install the Android sample:
+Run the Android sample:
 
 ```bash
 ./gradlew :sampleApp:installDebug
 ```
 
-Build the iOS sample from:
+Open the iOS sample:
 
 ```text
 iosApp/LiquidKitSample.xcodeproj
@@ -154,7 +141,7 @@ iosApp/LiquidKitSample.xcodeproj
 LiquidGlass's Android renderer includes source from
 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass).
 
-The optional Navigation 3 tab helper is adapted from the multiple-back-stack
-pattern in [`terrakok/nav3-recipes`](https://github.com/terrakok/nav3-recipes).
+The optional Navigation 3 helper is adapted from the multiple-back-stack pattern
+in [`terrakok/nav3-recipes`](https://github.com/terrakok/nav3-recipes).
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

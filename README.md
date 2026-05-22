@@ -10,6 +10,8 @@ through Compose Multiplatform interop.
 
 - `LiquidIcon`
 - `LiquidToggle`
+- `LiquidSlider`
+- `LiquidSegmentedControl`
 - `LiquidBottomNavigation`
 - `LiquidNavigationScaffold`
 
@@ -20,8 +22,8 @@ behind a single platform surface.
 
 - Android vendors the upstream `com.kyant.backdrop` renderer plus the catalog
   bottom tabs and toggle controls used by AndroidLiquidGlass.
-- iOS uses native `UITabBar` and `UISwitch` through Compose Multiplatform UIKit
-  interop.
+- iOS uses native `UITabBar`, `UISwitch`, `UISlider`, and `UISegmentedControl`
+  through Compose Multiplatform UIKit interop.
 - Shared components keep one common API, but controls with platform-native
   behavior use platform actual renderers.
 - `LiquidNavigationScaffold` owns bottom-navigation selection state when an app
@@ -33,8 +35,9 @@ behind a single platform surface.
 
 The `:sampleApp` module is split intentionally:
 
-- Android and iOS both run the common sample, which exercises only
-  `LiquidBottomNavigation` and `LiquidToggle`.
+- Android and iOS both run the common sample, which exercises
+  `LiquidBottomNavigation`, `LiquidToggle`, `LiquidSlider`, and
+  `LiquidSegmentedControl`.
 - Android renders the controls with the vendored AndroidLiquidGlass
   implementation.
 - iOS renders the controls with native UIKit interop.

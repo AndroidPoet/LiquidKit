@@ -1,3 +1,4 @@
+import io.github.androidpoet.liquidkit.build.LiquidKitConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -7,9 +8,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
 }
-
-group = "io.github.androidpoet"
-version = "0.1.0-SNAPSHOT"
 
 kotlin {
     compilerOptions {
@@ -50,18 +48,18 @@ kotlin {
         .matching { it.konanTarget.family.isAppleFamily }
         .configureEach {
             binaries.framework {
-                baseName = "LiquidKit"
+                baseName = LiquidKitConfiguration.libraryFrameworkName
                 isStatic = true
             }
         }
 }
 
 android {
-    namespace = "io.github.androidpoet.liquidkit"
-    compileSdk = 36
+    namespace = LiquidKitConfiguration.libraryNamespace
+    compileSdk = LiquidKitConfiguration.compileSdk
 
     defaultConfig {
-        minSdk = 23
+        minSdk = LiquidKitConfiguration.minSdk
     }
 
     compileOptions {

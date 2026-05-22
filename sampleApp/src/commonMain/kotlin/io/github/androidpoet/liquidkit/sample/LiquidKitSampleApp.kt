@@ -1,8 +1,10 @@
 package io.github.androidpoet.liquidkit.sample
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
@@ -23,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import io.github.androidpoet.liquidkit.icon.LiquidIcon
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationScaffold
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
-import io.github.androidpoet.liquidkit.play.LiquidPlayButton
 import io.github.androidpoet.liquidkit.segmented.LiquidSegment
 import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
 import io.github.androidpoet.liquidkit.slider.LiquidSlider
@@ -69,7 +72,6 @@ public fun LiquidKitSampleTabContent(
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var compactModeEnabled by remember { mutableStateOf(false) }
-    var playbackEnabled by remember { mutableStateOf(false) }
     var intensity by remember { mutableStateOf(0.58f) }
     var density by remember { mutableStateOf(ControlDensity.Regular) }
     val densitySegments = rememberControlDensitySegments()
@@ -78,42 +80,51 @@ public fun LiquidKitSampleTabContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+            .padding(horizontal = 20.dp, vertical = 30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        Header(selectedTab)
+        Header(
+            selectedTab = selectedTab,
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
+        )
 
-        ToggleRow(
-            label = "Notifications",
-            description = "Rendered by AndroidLiquidGlass on Android and UISwitch on iOS.",
-            value = notificationsEnabled,
-            onValueChange = { notificationsEnabled = it },
-        )
-        ToggleRow(
-            label = "Compact mode",
-            description = "Same common API, platform-native renderer underneath.",
-            value = compactModeEnabled,
-            onValueChange = { compactModeEnabled = it },
-        )
-        SliderRow(
-            label = "Intensity",
-            description = "Android uses AndroidLiquidGlass slider; iOS uses UISlider.",
-            value = intensity,
-            onValueChange = { intensity = it },
-        )
-        PlayRow(
-            label = "Playback",
-            description = "A glass play/pause control with a single common state.",
-            playing = playbackEnabled,
-            onPlayingChange = { playbackEnabled = it },
-        )
-        SegmentedRow(
-            label = "Density",
-            description = "Compact segmented choices with native UISegmentedControl on iOS.",
-            segments = densitySegments,
-            selected = density,
-            onSelected = { density = it },
-        )
+        ComponentPanel(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
+        ) {
+            LiquidKitToggleRow(
+                label = "LiquidKit Toggle",
+                description = "Rendered by AndroidLiquidGlass on Android and UISwitch on iOS.",
+                value = notificationsEnabled,
+                onValueChange = { notificationsEnabled = it },
+            )
+            PanelDivider()
+            LiquidKitToggleRow(
+                label = "LiquidKit Compact Toggle",
+                description = "Same common API, platform-native renderer underneath.",
+                value = compactModeEnabled,
+                onValueChange = { compactModeEnabled = it },
+            )
+            PanelDivider()
+            LiquidKitSliderRow(
+                label = "LiquidKit Slider",
+                description = "Android uses AndroidLiquidGlass slider; iOS uses UISlider.",
+                value = intensity,
+                onValueChange = { intensity = it },
+            )
+            PanelDivider()
+            LiquidKitSegmentedRow(
+                label = "LiquidKit Segmented Control",
+                description = "Compact segmented choices with native UISegmentedControl on iOS.",
+                segments = densitySegments,
+                selected = density,
+                onSelected = { density = it },
+            )
+        }
 
         Spacer(modifier = Modifier.height(96.dp))
     }
@@ -169,14 +180,20 @@ private fun rememberLiquidKitNavigationItems(): List<LiquidNavigationItem<Liquid
     }
 
 @Composable
-private fun Header(selectedTab: LiquidKitSampleTab) {
+private fun Header(
+    selectedTab: LiquidKitSampleTab,
+    modifier: Modifier = Modifier,
+) {
     val subtitle = when (selectedTab) {
-        LiquidKitSampleTab.Home -> "Bottom navigation, toggle, slider, play, and segmented controls."
+        LiquidKitSampleTab.Home -> "Bottom navigation, toggle, slider, and segmented controls."
         LiquidKitSampleTab.Search -> "Android uses vendored AndroidLiquidGlass controls."
         LiquidKitSampleTab.Settings -> "iOS uses native TabView, NavigationStack, and UIKit controls."
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         BasicText(
             text = "LiquidKit",
             style = TextStyle(
@@ -195,6 +212,37 @@ private fun Header(selectedTab: LiquidKitSampleTab) {
             ),
         )
     }
+}
+
+@Composable
+private fun ComponentPanel(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .background(
+                color = Color(0xCCFFFFFF),
+                shape = RoundedCornerShape(28.dp),
+            )
+            .border(
+                width = 1.dp,
+                color = Color(0x80FFFFFF),
+                shape = RoundedCornerShape(28.dp),
+            )
+            .padding(horizontal = 18.dp, vertical = 8.dp),
+        content = content,
+    )
+}
+
+@Composable
+private fun PanelDivider() {
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Color(0x1F4A5868)),
+    )
 }
 
 private enum class ControlDensity(
@@ -217,38 +265,24 @@ private fun rememberControlDensitySegments(): List<LiquidSegment<ControlDensity>
     }
 
 @Composable
-private fun ToggleRow(
+private fun LiquidKitToggleRow(
     label: String,
     description: String,
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
+        LabelBlock(
+            label = label,
+            description = description,
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            BasicText(
-                text = label,
-                style = TextStyle(
-                    color = Color(0xFF111820),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            )
-            BasicText(
-                text = description,
-                style = TextStyle(
-                    color = Color(0xFF43515F),
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp,
-                ),
-            )
-        }
+        )
         LiquidToggle(
             checked = value,
             onCheckedChange = onValueChange,
@@ -258,16 +292,21 @@ private fun ToggleRow(
 }
 
 @Composable
-private fun SliderRow(
+private fun LiquidKitSliderRow(
     label: String,
     description: String,
     value: Float,
     onValueChange: (Float) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             LabelBlock(
@@ -293,38 +332,19 @@ private fun SliderRow(
 }
 
 @Composable
-private fun PlayRow(
-    label: String,
-    description: String,
-    playing: Boolean,
-    onPlayingChange: (Boolean) -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        LabelBlock(
-            label = label,
-            description = description,
-            modifier = Modifier.weight(1f),
-        )
-        LiquidPlayButton(
-            playing = playing,
-            onPlayingChange = onPlayingChange,
-        )
-    }
-}
-
-@Composable
-private fun SegmentedRow(
+private fun LiquidKitSegmentedRow(
     label: String,
     description: String,
     segments: List<LiquidSegment<ControlDensity>>,
     selected: ControlDensity,
     onSelected: (ControlDensity) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
         LabelBlock(
             label = label,
             description = description,

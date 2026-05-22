@@ -1,3 +1,4 @@
+import io.github.androidpoet.liquidkit.build.LiquidKitConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -38,22 +39,22 @@ kotlin {
         .matching { it.konanTarget.family.isAppleFamily }
         .configureEach {
             binaries.framework {
-                baseName = "LiquidKitSample"
+                baseName = LiquidKitConfiguration.sampleFrameworkName
                 isStatic = true
             }
         }
 }
 
 android {
-    namespace = "com.kyant.backdrop.catalog"
-    compileSdk = 36
+    namespace = LiquidKitConfiguration.sampleNamespace
+    compileSdk = LiquidKitConfiguration.compileSdk
 
     defaultConfig {
-        applicationId = "com.kyant.backdrop.catalog"
-        minSdk = 23
-        targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        applicationId = LiquidKitConfiguration.sampleApplicationId
+        minSdk = LiquidKitConfiguration.minSdk
+        targetSdk = LiquidKitConfiguration.targetSdk
+        versionCode = LiquidKitConfiguration.sampleVersionCode
+        versionName = LiquidKitConfiguration.sampleVersionName
     }
 
     buildFeatures {

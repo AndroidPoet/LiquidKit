@@ -54,9 +54,9 @@ internal actual fun PlatformLiquidSlider(
                 maximumValue = valueRange.endInclusive
                 setValue(value, animated = false)
                 this.enabled = enabled
-                minimumTrackTintColor = style.selectedContainerColor.toUIColor()
-                maximumTrackTintColor = style.containerColor.toUIColor()
-                thumbTintColor = style.selectedContentColor.toUIColor()
+                minimumTrackTintColor = style.selectedContentColor.copy(alpha = 0.58f).toUIColor()
+                maximumTrackTintColor = style.contentColor.copy(alpha = 0.16f).toUIColor()
+                thumbTintColor = UIColor.whiteColor
                 backgroundColor = UIColor.clearColor
                 addTarget(
                     target = target,
@@ -73,9 +73,9 @@ internal actual fun PlatformLiquidSlider(
                 slider.setValue(value, animated = true)
             }
             slider.enabled = enabled
-            slider.minimumTrackTintColor = style.selectedContainerColor.toUIColor()
-            slider.maximumTrackTintColor = style.containerColor.toUIColor()
-            slider.thumbTintColor = style.selectedContentColor.toUIColor()
+            slider.minimumTrackTintColor = style.selectedContentColor.copy(alpha = if (enabled) 0.58f else 0.26f).toUIColor()
+            slider.maximumTrackTintColor = style.contentColor.copy(alpha = if (enabled) 0.16f else 0.10f).toUIColor()
+            slider.thumbTintColor = UIColor.whiteColor
         },
         onRelease = {},
         properties = UIKitInteropProperties(

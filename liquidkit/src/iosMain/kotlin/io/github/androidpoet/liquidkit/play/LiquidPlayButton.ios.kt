@@ -1,7 +1,6 @@
 package io.github.androidpoet.liquidkit.play
 
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -21,6 +20,7 @@ import platform.UIKit.UIButton
 import platform.UIKit.UIButtonTypeSystem
 import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventTouchUpInside
+import platform.UIKit.UIImage
 import platform.darwin.NSObject
 
 @OptIn(BetaInteropApi::class)
@@ -59,9 +59,7 @@ internal actual fun PlatformLiquidPlayButton(
                 )
             }
         },
-        modifier = modifier
-            .defaultMinSize(minWidth = 96.dp)
-            .height(48.dp),
+        modifier = modifier.size(56.dp),
         update = { button ->
             button.configureLiquidPlayButton(playing, enabled, style)
         },
@@ -79,12 +77,13 @@ private fun UIButton.configureLiquidPlayButton(
     enabled: Boolean,
     style: LiquidGlassStyle,
 ) {
-    setTitle(if (playing) "Pause" else "Play", forState = 0u)
+    setTitle(null, forState = 0u)
+    setImage(UIImage.systemImageNamed(if (playing) "pause.fill" else "play.fill"), forState = 0u)
     this.enabled = enabled
     backgroundColor = style.selectedContainerColor.toUIColor()
     tintColor = style.selectedContentColor.toUIColor()
     setTitleColor(style.selectedContentColor.toUIColor(), forState = 0u)
-    layer.cornerRadius = 24.0
+    layer.cornerRadius = 28.0
     layer.masksToBounds = true
     setOpaque(false)
     if (!enabled) {

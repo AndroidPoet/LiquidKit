@@ -1,7 +1,6 @@
 package io.github.androidpoet.liquidkit.internal.androidglass.catalog.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -22,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -43,6 +43,7 @@ import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
 import com.kyant.shapes.Capsule
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.DampedDragAnimation
+import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.inspectDragGestures
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -54,13 +55,18 @@ fun LiquidSlider(
     backdrop: Backdrop,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    activeTrackColor: Color = Color.Unspecified,
+    inactiveTrackColor: Color = Color.Unspecified,
+    thumbColor: Color = Color.White,
 ) {
     val isLightTheme = !isSystemInDarkTheme()
-    val accentColor =
-        if (isLightTheme) Color(0xFF0088FF)
+    val resolvedActiveTrackColor =
+        if (activeTrackColor.isSpecified) activeTrackColor
+        else if (isLightTheme) Color(0xFF0088FF)
         else Color(0xFF0091FF)
-    val trackColor =
-        if (isLightTheme) Color(0xFF787878).copy(0.2f)
+    val resolvedInactiveTrackColor =
+        if (inactiveTrackColor.isSpecified) inactiveTrackColor
+        else if (isLightTheme) Color(0xFF787878).copy(0.2f)
         else Color(0xFF787880).copy(0.36f)
 
     val trackBackdrop = rememberLayerBackdrop()
@@ -110,25 +116,24 @@ fun LiquidSlider(
                     }
                 }
         }
+        fun updateFromPosition(positionX: Float) {
+            val progress = (positionX / trackWidth).fastCoerceIn(0f, 1f)
+            val targetValue =
+                if (isLtr) {
+                    valueRange.start + (valueRange.endInclusive - valueRange.start) * progress
+                } else {
+                    valueRange.endInclusive - (valueRange.endInclusive - valueRange.start) * progress
+                }
+            val coercedValue = targetValue.coerceIn(valueRange)
+            dampedDragAnimation.updateValue(coercedValue)
+            onValueChange(coercedValue)
+        }
 
         Box(Modifier.layerBackdrop(trackBackdrop)) {
             Box(
                 Modifier
                     .clip(Capsule())
-                    .background(trackColor)
-                    .pointerInput(enabled, animationScope) {
-                        if (enabled) {
-                            detectTapGestures { position ->
-                                val delta = (valueRange.endInclusive - valueRange.start) * (position.x / trackWidth)
-                                val targetValue =
-                                    (if (isLtr) valueRange.start + delta
-                                    else valueRange.endInclusive - delta)
-                                        .coerceIn(valueRange)
-                                dampedDragAnimation.animateToValue(targetValue)
-                                onValueChange(targetValue)
-                            }
-                        }
-                    }
+                    .background(resolvedInactiveTrackColor)
                     .height(6.dp)
                     .fillMaxWidth(),
             )
@@ -136,7 +141,7 @@ fun LiquidSlider(
             Box(
                 Modifier
                     .clip(Capsule())
-                    .background(accentColor)
+                    .background(resolvedActiveTrackColor)
                     .height(6.dp)
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
@@ -147,6 +152,20 @@ fun LiquidSlider(
                     },
             )
         }
+
+        Box(
+            Modifier
+                .height(48.dp)
+                .fillMaxWidth()
+                .pointerInput(enabled, trackWidth, isLtr, valueRange) {
+                    if (enabled) {
+                        inspectDragGestures(
+                            onDragStart = { down -> updateFromPosition(down.position.x) },
+                            onDrag = { change, _ -> updateFromPosition(change.position.x) },
+                        )
+                    }
+                },
+        )
 
         Box(
             Modifier
@@ -208,7 +227,7 @@ fun LiquidSlider(
                     },
                     onDrawSurface = {
                         val progress = dampedDragAnimation.pressProgress
-                        drawRect(Color.White.copy(alpha = 1f - progress))
+                        drawRect(thumbColor.copy(alpha = 1f - progress))
                     },
                 )
                 .size(40.dp, 24.dp),

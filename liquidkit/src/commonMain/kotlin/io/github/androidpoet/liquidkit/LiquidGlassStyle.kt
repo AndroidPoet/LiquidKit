@@ -28,8 +28,8 @@ public data class LiquidGlassStyle(
 
         public val Control: LiquidGlassStyle = LiquidGlassStyle(
             cornerRadius = 18.dp,
-            containerColor = Color.White.copy(alpha = 0.30f),
-            selectedContainerColor = Color(0xFF0088FF).copy(alpha = 0.30f),
+            containerColor = Color.White.copy(alpha = 0.34f),
+            selectedContainerColor = Color(0xFF111820).copy(alpha = 0.08f),
             contentColor = Color(0xFF4E5968),
             selectedContentColor = Color(0xFF101418),
             blurRadius = 14.dp,

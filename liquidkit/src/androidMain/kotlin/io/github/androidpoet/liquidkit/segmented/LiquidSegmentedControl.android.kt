@@ -35,6 +35,9 @@ internal actual fun <T : Any> PlatformLiquidSegmentedControl(
         backdrop = backdrop,
         tabsCount = segments.size,
         modifier = modifier.alpha(if (enabled) 1f else 0.42f),
+        accentColor = style.selectedContentColor,
+        containerColor = style.containerColor,
+        selectedSurfaceColor = style.selectedContainerColor,
     ) {
         segments.forEach { segment ->
             val selected = segment.key == selectedKey

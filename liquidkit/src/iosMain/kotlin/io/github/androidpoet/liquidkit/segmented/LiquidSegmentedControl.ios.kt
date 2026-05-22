@@ -16,8 +16,11 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import platform.Foundation.NSSelectorFromString
+import platform.UIKit.NSForegroundColorAttributeName
 import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventValueChanged
+import platform.UIKit.UIControlStateNormal
+import platform.UIKit.UIControlStateSelected
 import platform.UIKit.UISegmentedControl
 import platform.darwin.NSObject
 
@@ -91,8 +94,16 @@ private fun <T : Any> UISegmentedControl.configureLiquidSegmentedControl(
     backgroundColor = style.containerColor.toUIColor()
     tintColor = style.selectedContentColor.toUIColor()
     setTitleTextAttributes(
-        mapOf<Any?, Any?>(),
-        forState = 0u,
+        mapOf<Any?, Any?>(
+            NSForegroundColorAttributeName to style.contentColor.toUIColor(),
+        ),
+        forState = UIControlStateNormal,
+    )
+    setTitleTextAttributes(
+        mapOf<Any?, Any?>(
+            NSForegroundColorAttributeName to style.selectedContentColor.toUIColor(),
+        ),
+        forState = UIControlStateSelected,
     )
     this.enabled = enabled
     alpha = if (enabled) 1.0 else 0.42

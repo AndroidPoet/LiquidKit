@@ -28,5 +28,8 @@ internal actual fun PlatformLiquidSlider(
         backdrop = backdrop,
         modifier = modifier.alpha(if (enabled) 1f else 0.42f),
         enabled = enabled,
+        activeTrackColor = style.selectedContentColor.copy(alpha = 0.58f),
+        inactiveTrackColor = style.contentColor.copy(alpha = 0.16f),
+        thumbColor = style.containerColor.copy(alpha = 0.92f),
     )
 }

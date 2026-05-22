@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import io.github.androidpoet.liquidkit.sample.LiquidKitSampleApp
+import io.github.androidpoet.liquidkit.sample.LiquidKitComposeOwnedTabShell
 
 class MainActivity : ComponentActivity() {
 
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            LiquidKitSampleApp()
+            LiquidKitComposeOwnedTabShell()
         }
     }
 }

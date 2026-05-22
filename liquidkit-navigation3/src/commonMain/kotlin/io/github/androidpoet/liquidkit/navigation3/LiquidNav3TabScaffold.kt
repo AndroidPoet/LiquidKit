@@ -3,7 +3,6 @@ package io.github.androidpoet.liquidkit.navigation3
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -28,16 +27,6 @@ import io.github.androidpoet.liquidkit.navigation.LiquidBottomNavigation
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
 import kotlinx.serialization.PolymorphicSerializer
 
-@Immutable
-public data class LiquidNav3Tab(
-    public val root: NavKey,
-    public val item: LiquidNavigationItem<NavKey>,
-) {
-    init {
-        require(root == item.key) { "LiquidNav3Tab root must match its LiquidNavigationItem key." }
-    }
-}
-
 @Stable
 public class LiquidNav3TabState internal constructor(
     public val startRoute: NavKey,
@@ -47,7 +36,7 @@ public class LiquidNav3TabState internal constructor(
     public var selectedRoute: NavKey by selectedRoute
         private set
 
-    public val selectedBackStack: NavBackStack<NavKey>
+    internal val selectedBackStack: NavBackStack<NavKey>
         get() = backStacks[selectedRoute] ?: error("Stack for $selectedRoute not found.")
 
     internal val stacksInUse: List<NavKey>
@@ -57,7 +46,7 @@ public class LiquidNav3TabState internal constructor(
             listOf(startRoute, selectedRoute)
         }
 
-    public fun navigate(route: NavKey) {
+    internal fun select(route: NavKey) {
         if (route in backStacks.keys) {
             selectedRoute = route
         } else {
@@ -65,7 +54,7 @@ public class LiquidNav3TabState internal constructor(
         }
     }
 
-    public fun goBack() {
+    internal fun goBack() {
         val currentRoute = selectedBackStack.last()
 
         if (currentRoute == selectedRoute) {
@@ -78,14 +67,14 @@ public class LiquidNav3TabState internal constructor(
 
 @Composable
 public fun rememberLiquidNav3TabState(
-    tabs: List<LiquidNav3Tab>,
-    startRoute: NavKey = tabs.first().root,
+    items: List<LiquidNavigationItem<NavKey>>,
+    startRoute: NavKey = items.first().key,
     savedStateConfiguration: SavedStateConfiguration,
 ): LiquidNav3TabState {
-    require(tabs.isNotEmpty()) { "LiquidNav3TabScaffold requires at least one tab." }
-    require(tabs.any { it.root == startRoute }) { "startRoute must be one of the tab root routes." }
+    require(items.isNotEmpty()) { "LiquidNav3TabScaffold requires at least one item." }
+    require(items.any { it.key == startRoute }) { "startRoute must be one of the tab item keys." }
 
-    val rootRoutes = remember(tabs) { tabs.map { it.root }.toSet() }
+    val rootRoutes = remember(items) { items.map { it.key }.toSet() }
     val selectedRoute = rememberSerializable(
         startRoute,
         rootRoutes,
@@ -109,22 +98,22 @@ public fun rememberLiquidNav3TabState(
 
 @Composable
 public fun LiquidNav3TabScaffold(
-    tabs: List<LiquidNav3Tab>,
+    items: List<LiquidNavigationItem<NavKey>>,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
     savedStateConfiguration: SavedStateConfiguration,
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
-    startRoute: NavKey = tabs.first().root,
+    startRoute: NavKey = items.first().key,
 ) {
     val state = rememberLiquidNav3TabState(
-        tabs = tabs,
+        items = items,
         startRoute = startRoute,
         savedStateConfiguration = savedStateConfiguration,
     )
 
     LiquidNav3TabScaffold(
-        tabs = tabs,
+        items = items,
         state = state,
         entryProvider = entryProvider,
         modifier = modifier,
@@ -135,14 +124,14 @@ public fun LiquidNav3TabScaffold(
 
 @Composable
 public fun LiquidNav3TabScaffold(
-    tabs: List<LiquidNav3Tab>,
+    items: List<LiquidNavigationItem<NavKey>>,
     state: LiquidNav3TabState,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
 ) {
-    require(tabs.isNotEmpty()) { "LiquidNav3TabScaffold requires at least one tab." }
+    require(items.isNotEmpty()) { "LiquidNav3TabScaffold requires at least one item." }
 
     Box(modifier = modifier) {
         NavDisplay(
@@ -151,9 +140,9 @@ public fun LiquidNav3TabScaffold(
             modifier = Modifier.matchParentSize(),
         )
         LiquidBottomNavigation(
-            items = tabs.map { it.item },
+            items = items,
             selectedKey = state.selectedRoute,
-            onSelected = state::navigate,
+            onSelected = state::select,
             modifier = navigationModifier.align(Alignment.BottomCenter),
             style = style,
         )

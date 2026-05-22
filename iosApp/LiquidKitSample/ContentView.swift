@@ -5,7 +5,7 @@ import UIKit
 struct ContentView: View {
     var body: some View {
         if #available(iOS 26.0, *) {
-            NativeLiquidNavigationView()
+            IosOwnedLiquidTabView()
         } else {
             ComposeFallbackView()
                 .ignoresSafeArea(.all)
@@ -23,64 +23,42 @@ struct ComposeFallbackView: UIViewControllerRepresentable {
 }
 
 @available(iOS 26.0, *)
-@Observable
-final class AppNavigationCoordinator {
-    enum AppTab: Hashable {
-        case home
-        case search
-        case settings
-    }
-
-    var selectedTab: AppTab = .home
-    var homePath: [String] = []
-    var searchPath: [String] = []
-    var settingsPath: [String] = []
-
-    func popToRoot(for tab: AppTab) {
-        switch tab {
-        case .home:
-            homePath.removeAll()
-        case .search:
-            searchPath.removeAll()
-        case .settings:
-            settingsPath.removeAll()
-        }
-    }
+enum IosOwnedTab: Hashable {
+    case home
+    case search
+    case settings
 }
 
 @available(iOS 26.0, *)
-struct NativeLiquidNavigationView: View {
-    @State private var coordinator = AppNavigationCoordinator()
+struct IosOwnedLiquidTabView: View {
+    @State private var selectedTab = IosOwnedTab.home
 
     var body: some View {
         TabView(
             selection: Binding(
-                get: { coordinator.selectedTab },
-                set: { coordinator.selectedTab = $0 }
+                get: { selectedTab },
+                set: { selectedTab = $0 }
             )
         ) {
-            Tab("Home", systemImage: "house", value: AppNavigationCoordinator.AppTab.home) {
-                TabContentView(
-                    title: "Home",
-                    path: $coordinator.homePath,
+            Tab("Home", systemImage: "house", value: IosOwnedTab.home) {
+                ComposeTabRootView(
                     makeRootViewController: LiquidKitSample.MainViewControllerKt.HomeViewController
                 )
+                .ignoresSafeArea(.all)
             }
 
-            Tab("Search", systemImage: "magnifyingglass", value: AppNavigationCoordinator.AppTab.search) {
-                TabContentView(
-                    title: "Search",
-                    path: $coordinator.searchPath,
+            Tab("Search", systemImage: "magnifyingglass", value: IosOwnedTab.search) {
+                ComposeTabRootView(
                     makeRootViewController: LiquidKitSample.MainViewControllerKt.SearchViewController
                 )
+                .ignoresSafeArea(.all)
             }
 
-            Tab("Settings", systemImage: "gearshape", value: AppNavigationCoordinator.AppTab.settings) {
-                TabContentView(
-                    title: "Settings",
-                    path: $coordinator.settingsPath,
+            Tab("Settings", systemImage: "gearshape", value: IosOwnedTab.settings) {
+                ComposeTabRootView(
                     makeRootViewController: LiquidKitSample.MainViewControllerKt.SettingsViewController
                 )
+                .ignoresSafeArea(.all)
             }
         }
         .tabBarMinimizeBehavior(.automatic)
@@ -89,27 +67,11 @@ struct NativeLiquidNavigationView: View {
 }
 
 @available(iOS 26.0, *)
-struct TabContentView: View {
-    let title: String
-    @Binding var path: [String]
+struct ComposeTabRootView: UIViewControllerRepresentable {
     let makeRootViewController: () -> UIViewController
 
-    var body: some View {
-        NavigationStack(path: $path) {
-            NativeNavComposeView(makeViewController: makeRootViewController)
-                .ignoresSafeArea(.all)
-                .navigationTitle(title)
-                .navigationBarHidden(true)
-        }
-    }
-}
-
-@available(iOS 26.0, *)
-struct NativeNavComposeView: UIViewControllerRepresentable {
-    let makeViewController: () -> UIViewController
-
     func makeUIViewController(context: Context) -> UIViewController {
-        makeViewController()
+        makeRootViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {

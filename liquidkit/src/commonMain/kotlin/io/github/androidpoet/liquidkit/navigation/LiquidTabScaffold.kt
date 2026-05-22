@@ -13,24 +13,24 @@ import androidx.compose.ui.Modifier
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
 
 @Stable
-public class LiquidNavigationState<T : Any> internal constructor(initialKey: T) {
+public class LiquidTabState<T : Any> internal constructor(initialKey: T) {
     public var selectedKey: T by mutableStateOf(initialKey)
         private set
 
-    public fun navigate(key: T) {
+    public fun select(key: T) {
         selectedKey = key
     }
 }
 
 @Composable
-public fun <T : Any> rememberLiquidNavigationState(
+public fun <T : Any> rememberLiquidTabState(
     initialKey: T,
-): LiquidNavigationState<T> = remember(initialKey) {
-    LiquidNavigationState(initialKey)
+): LiquidTabState<T> = remember(initialKey) {
+    LiquidTabState(initialKey)
 }
 
 @Composable
-public fun <T : Any> LiquidNavigationScaffold(
+public fun <T : Any> LiquidTabScaffold(
     items: List<LiquidNavigationItem<T>>,
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
@@ -38,13 +38,13 @@ public fun <T : Any> LiquidNavigationScaffold(
     onSelected: (T) -> Unit = {},
     content: @Composable BoxScope.(selectedKey: T) -> Unit,
 ) {
-    require(items.isNotEmpty()) { "LiquidNavigationScaffold requires at least one item." }
+    require(items.isNotEmpty()) { "LiquidTabScaffold requires at least one item." }
 
-    val navigationState = rememberLiquidNavigationState(items.first().key)
+    val tabState = rememberLiquidTabState(items.first().key)
 
-    LiquidNavigationScaffold(
+    LiquidTabScaffold(
         items = items,
-        state = navigationState,
+        state = tabState,
         modifier = modifier,
         navigationModifier = navigationModifier,
         style = style,
@@ -54,16 +54,16 @@ public fun <T : Any> LiquidNavigationScaffold(
 }
 
 @Composable
-public fun <T : Any> LiquidNavigationScaffold(
+public fun <T : Any> LiquidTabScaffold(
     items: List<LiquidNavigationItem<T>>,
-    state: LiquidNavigationState<T>,
+    state: LiquidTabState<T>,
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
     onSelected: (T) -> Unit = {},
     content: @Composable BoxScope.(selectedKey: T) -> Unit,
 ) {
-    require(items.isNotEmpty()) { "LiquidNavigationScaffold requires at least one item." }
+    require(items.isNotEmpty()) { "LiquidTabScaffold requires at least one item." }
 
     Box(modifier = modifier) {
         content(state.selectedKey)
@@ -71,7 +71,7 @@ public fun <T : Any> LiquidNavigationScaffold(
             items = items,
             selectedKey = state.selectedKey,
             onSelected = { key ->
-                state.navigate(key)
+                state.select(key)
                 onSelected(key)
             },
             modifier = navigationModifier.align(Alignment.BottomCenter),

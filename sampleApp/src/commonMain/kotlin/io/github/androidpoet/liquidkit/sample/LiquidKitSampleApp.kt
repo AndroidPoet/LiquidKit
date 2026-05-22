@@ -2,7 +2,6 @@ package io.github.androidpoet.liquidkit.sample
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -21,10 +20,8 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,9 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.androidpoet.liquidkit.icon.LiquidIcon
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
-import io.github.androidpoet.liquidkit.navigation3.LiquidNav3Tab
 import io.github.androidpoet.liquidkit.navigation3.LiquidNav3TabScaffold
-import io.github.androidpoet.liquidkit.navigation3.rememberLiquidNav3TabState
 import io.github.androidpoet.liquidkit.segmented.LiquidSegment
 import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
 import io.github.androidpoet.liquidkit.slider.LiquidSlider
@@ -64,58 +59,28 @@ public enum class LiquidKitSampleTab(
 
 @Composable
 fun LiquidKitSampleApp(modifier: Modifier = Modifier) {
-    val tabs = rememberLiquidKitNav3Tabs()
-    val navigationState = rememberLiquidNav3TabState(
-        tabs = tabs,
-        startRoute = LiquidKitHomeRoute,
-        savedStateConfiguration = liquidKitNav3SavedStateConfiguration,
-    )
+    LiquidKitComposeOwnedTabShell(modifier)
+}
+
+@Composable
+public fun LiquidKitComposeOwnedTabShell(modifier: Modifier = Modifier) {
+    val items = rememberLiquidKitTabItems()
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider<NavKey> {
         entry<LiquidKitHomeRoute> {
-            LiquidKitNav3TabRoot(
-                selectedTab = LiquidKitSampleTab.Home,
-                onNext = { navigationState.navigate(LiquidKitHomeDetailRoute) },
-            )
+            LiquidKitSampleTabRoot(selectedTab = LiquidKitSampleTab.Home)
         }
         entry<LiquidKitSearchRoute> {
-            LiquidKitNav3TabRoot(
-                selectedTab = LiquidKitSampleTab.Search,
-                onNext = { navigationState.navigate(LiquidKitSearchDetailRoute) },
-            )
+            LiquidKitSampleTabRoot(selectedTab = LiquidKitSampleTab.Search)
         }
         entry<LiquidKitSettingsRoute> {
-            LiquidKitNav3TabRoot(
-                selectedTab = LiquidKitSampleTab.Settings,
-                onNext = { navigationState.navigate(LiquidKitSettingsDetailRoute) },
-            )
-        }
-        entry<LiquidKitHomeDetailRoute> {
-            LiquidKitNav3DetailScreen(
-                selectedTab = LiquidKitSampleTab.Home,
-                title = "Home Detail",
-                onBack = navigationState::goBack,
-            )
-        }
-        entry<LiquidKitSearchDetailRoute> {
-            LiquidKitNav3DetailScreen(
-                selectedTab = LiquidKitSampleTab.Search,
-                title = "Search Detail",
-                onBack = navigationState::goBack,
-            )
-        }
-        entry<LiquidKitSettingsDetailRoute> {
-            LiquidKitNav3DetailScreen(
-                selectedTab = LiquidKitSampleTab.Settings,
-                title = "Settings Detail",
-                onBack = navigationState::goBack,
-            )
+            LiquidKitSampleTabRoot(selectedTab = LiquidKitSampleTab.Settings)
         }
     }
 
     LiquidNav3TabScaffold(
-        tabs = tabs,
-        state = navigationState,
+        items = items,
         entryProvider = entryProvider,
+        savedStateConfiguration = liquidKitNav3SavedStateConfiguration,
         modifier = modifier
             .fillMaxSize()
             .background(sampleBackground()),
@@ -211,171 +176,56 @@ public fun LiquidKitSampleTabRoot(
 private data object LiquidKitHomeRoute : NavKey
 
 @Serializable
-private data object LiquidKitHomeDetailRoute : NavKey
-
-@Serializable
 private data object LiquidKitSearchRoute : NavKey
 
 @Serializable
-private data object LiquidKitSearchDetailRoute : NavKey
-
-@Serializable
 private data object LiquidKitSettingsRoute : NavKey
-
-@Serializable
-private data object LiquidKitSettingsDetailRoute : NavKey
 
 private val liquidKitNav3SavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
             subclass(LiquidKitHomeRoute::class, LiquidKitHomeRoute.serializer())
-            subclass(LiquidKitHomeDetailRoute::class, LiquidKitHomeDetailRoute.serializer())
             subclass(LiquidKitSearchRoute::class, LiquidKitSearchRoute.serializer())
-            subclass(LiquidKitSearchDetailRoute::class, LiquidKitSearchDetailRoute.serializer())
             subclass(LiquidKitSettingsRoute::class, LiquidKitSettingsRoute.serializer())
-            subclass(LiquidKitSettingsDetailRoute::class, LiquidKitSettingsDetailRoute.serializer())
         }
     }
 }
 
 @Composable
-private fun rememberLiquidKitNav3Tabs(): List<LiquidNav3Tab> =
+private fun rememberLiquidKitTabItems(): List<LiquidNavigationItem<NavKey>> =
     remember {
         listOf(
-            LiquidNav3Tab(
-                root = LiquidKitHomeRoute,
-                item = LiquidNavigationItem(
-                    key = LiquidKitHomeRoute,
-                    label = LiquidKitSampleTab.Home.title,
-                    icon = LiquidIcon(
-                        imageVector = SampleIcons.Home,
-                        contentDescription = LiquidKitSampleTab.Home.title,
-                        iosSystemName = LiquidKitSampleTab.Home.iosSystemImage,
-                        selectedIosSystemName = "house.fill",
-                    ),
+            LiquidNavigationItem(
+                key = LiquidKitHomeRoute,
+                label = LiquidKitSampleTab.Home.title,
+                icon = LiquidIcon(
+                    imageVector = SampleIcons.Home,
+                    contentDescription = LiquidKitSampleTab.Home.title,
+                    iosSystemName = LiquidKitSampleTab.Home.iosSystemImage,
+                    selectedIosSystemName = "house.fill",
                 ),
             ),
-            LiquidNav3Tab(
-                root = LiquidKitSearchRoute,
-                item = LiquidNavigationItem(
-                    key = LiquidKitSearchRoute,
-                    label = LiquidKitSampleTab.Search.title,
-                    icon = LiquidIcon(
-                        imageVector = SampleIcons.Controls,
-                        contentDescription = LiquidKitSampleTab.Search.title,
-                        iosSystemName = LiquidKitSampleTab.Search.iosSystemImage,
-                    ),
+            LiquidNavigationItem(
+                key = LiquidKitSearchRoute,
+                label = LiquidKitSampleTab.Search.title,
+                icon = LiquidIcon(
+                    imageVector = SampleIcons.Controls,
+                    contentDescription = LiquidKitSampleTab.Search.title,
+                    iosSystemName = LiquidKitSampleTab.Search.iosSystemImage,
                 ),
             ),
-            LiquidNav3Tab(
-                root = LiquidKitSettingsRoute,
-                item = LiquidNavigationItem(
-                    key = LiquidKitSettingsRoute,
-                    label = LiquidKitSampleTab.Settings.title,
-                    icon = LiquidIcon(
-                        imageVector = SampleIcons.Menu,
-                        contentDescription = LiquidKitSampleTab.Settings.title,
-                        iosSystemName = LiquidKitSampleTab.Settings.iosSystemImage,
-                        selectedIosSystemName = "gearshape.fill",
-                    ),
+            LiquidNavigationItem(
+                key = LiquidKitSettingsRoute,
+                label = LiquidKitSampleTab.Settings.title,
+                icon = LiquidIcon(
+                    imageVector = SampleIcons.Menu,
+                    contentDescription = LiquidKitSampleTab.Settings.title,
+                    iosSystemName = LiquidKitSampleTab.Settings.iosSystemImage,
+                    selectedIosSystemName = "gearshape.fill",
                 ),
             ),
         )
     }
-
-@Composable
-private fun LiquidKitNav3TabRoot(
-    selectedTab: LiquidKitSampleTab,
-    onNext: () -> Unit,
-) {
-    LiquidKitSampleTabContent(selectedTab = selectedTab) {
-        ComponentPanel(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 620.dp),
-        ) {
-            LiquidKitNav3ActionRow(
-                label = "Nav3 ${selectedTab.title} Detail",
-                description = "Pushes a route onto this tab's own Navigation 3 back stack.",
-                onClick = onNext,
-            )
-        }
-    }
-}
-
-@Composable
-private fun LiquidKitNav3DetailScreen(
-    selectedTab: LiquidKitSampleTab,
-    title: String,
-    onBack: () -> Unit,
-) {
-    var count by rememberSaveable { mutableIntStateOf(0) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .safeDrawingPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        Header(
-            selectedTab = selectedTab,
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 620.dp),
-        )
-
-        ComponentPanel(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 620.dp),
-        ) {
-            LabelBlock(
-                label = title,
-                description = "This screen is rendered by NavDisplay from a tab-specific Nav3 stack.",
-                modifier = Modifier.padding(vertical = 14.dp),
-            )
-            PanelDivider()
-            LiquidKitNav3ActionRow(
-                label = "Counter: $count",
-                description = "State is retained by Nav3's decorated entry for this route.",
-                onClick = { count++ },
-            )
-            PanelDivider()
-            LiquidKitNav3ActionRow(
-                label = "Back",
-                description = "Pops this route from the current tab stack.",
-                onClick = onBack,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(96.dp))
-    }
-}
-
-@Composable
-private fun LiquidKitNav3ActionRow(
-    label: String,
-    description: String,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        LabelBlock(
-            label = label,
-            description = description,
-            modifier = Modifier.weight(1f),
-        )
-    }
-}
 
 @Composable
 private fun Header(
@@ -385,7 +235,7 @@ private fun Header(
     val subtitle = when (selectedTab) {
         LiquidKitSampleTab.Home -> "Bottom navigation, toggle, slider, and segmented controls."
         LiquidKitSampleTab.Search -> "Android uses vendored AndroidLiquidGlass controls."
-        LiquidKitSampleTab.Settings -> "iOS uses native TabView, NavigationStack, and UIKit controls."
+        LiquidKitSampleTab.Settings -> "iOS 26 uses native SwiftUI TabView while Compose renders tab content."
     }
 
     Column(

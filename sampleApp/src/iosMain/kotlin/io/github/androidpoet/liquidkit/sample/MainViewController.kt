@@ -4,7 +4,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import platform.UIKit.UIViewController
 
 fun MainViewController(): UIViewController = ComposeUIViewController {
-    LiquidKitSampleApp()
+    LiquidKitComposeOwnedTabShell()
 }
 
 fun HomeViewController(): UIViewController = tabRootViewController(LiquidKitSampleTab.Home)

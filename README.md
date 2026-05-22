@@ -100,6 +100,10 @@ LiquidToggle(
 LiquidSlider(
     value = intensity,
     onValueChange = { intensity = it },
+    style = liquidGlassStyle(
+        containerColor = Color.White.copy(alpha = 0.24f),
+        selectedContentColor = Color(0xFF111820),
+    ),
 )
 
 LiquidSegmentedControl(

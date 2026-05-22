@@ -2,36 +2,60 @@
 
 LiquidKit is a Kotlin Multiplatform component kit for Liquid Glass UI.
 
-The public API lives in common code. Android renders with AndroidLiquidGlass
-(`io.github.kyant0:backdrop`) while iOS uses native UIKit-backed glass surfaces
+The public API lives in common code. Android uses copied AndroidLiquidGlass
+renderer/component source internally, while iOS uses native UIKit controls
 through Compose Multiplatform interop.
 
 ## Components
 
-- `LiquidSurface`
 - `LiquidIcon`
-- `LiquidButton`
 - `LiquidToggle`
-- `LiquidSlider`
 - `LiquidBottomNavigation`
-- `LiquidDropdown`
+- `LiquidNavigationScaffold`
 
 ## Architecture
 
 LiquidKit keeps component behavior in `commonMain` and isolates glass rendering
 behind a single platform surface.
 
-- Android uses `AndroidLiquidGlass` / `backdrop` for Liquid Glass rendering.
-- iOS uses native `UIVisualEffectView` through Compose Multiplatform UIKit interop.
-- Shared components compose on top of `LiquidSurface`, so new controls do not need
-  duplicated platform implementations unless they need platform-native behavior.
+- Android vendors the upstream `com.kyant.backdrop` renderer plus the catalog
+  bottom tabs and toggle controls used by AndroidLiquidGlass.
+- iOS uses native `UITabBar` and `UISwitch` through Compose Multiplatform UIKit
+  interop.
+- Shared components keep one common API, but controls with platform-native
+  behavior use platform actual renderers.
+- `LiquidNavigationScaffold` owns bottom-navigation selection state when an app
+  only needs tab switching. Full iOS 26 `TabView`/`NavigationStack` ownership
+  still belongs in the native app shell when the app needs Apple's system
+  Liquid Glass navigation behavior.
+
+## Sample App
+
+The `:sampleApp` module is split intentionally:
+
+- Android and iOS both run the common sample, which exercises only
+  `LiquidBottomNavigation` and `LiquidToggle`.
+- Android renders the controls with the vendored AndroidLiquidGlass
+  implementation.
+- iOS renders the controls with native UIKit interop.
+- The `iosApp` target follows the iOS 26 migration pattern: SwiftUI owns the
+  native `TabView` and per-tab `NavigationStack`, while Compose renders each tab
+  root through exported Kotlin view controller entry points.
+
+```bash
+gradle :sampleApp:compileDebugKotlinAndroid :sampleApp:compileKotlinIosSimulatorArm64
+gradle :sampleApp:installDebug
+cd iosApp && xcodegen generate
+```
 
 ## Credits
 
-LiquidKit's Android Liquid Glass rendering is built on top of
+LiquidKit's Android renderer copies source from
 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass).
-Credit to Kyant for the Android backdrop and Liquid Glass effect work that
-makes the Android renderer possible.
+Credit to Kyant for the Android Liquid Glass research and implementation.
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for vendored source
+attribution.
 
 ## Package
 
@@ -56,19 +80,18 @@ LiquidBottomNavigation(
 ```
 
 ```kotlin
+LiquidNavigationScaffold(items = items) { selectedKey ->
+    when (selectedKey) {
+        "home" -> HomeScreen()
+        "search" -> SearchScreen()
+        "settings" -> SettingsScreen()
+    }
+}
+```
+
+```kotlin
 LiquidToggle(
     checked = enabled,
     onCheckedChange = { enabled = it },
-)
-
-LiquidButton(
-    text = "Continue",
-    icon = LiquidIcon(Icons.Rounded.ArrowForward),
-    onClick = { /* continue */ },
-)
-
-LiquidSlider(
-    value = volume,
-    onValueChange = { volume = it },
 )
 ```

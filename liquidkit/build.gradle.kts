@@ -12,7 +12,9 @@ group = "io.github.androidpoet"
 version = "0.1.0-SNAPSHOT"
 
 kotlin {
-    explicitApi()
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
 
     androidTarget {
         compilerOptions {
@@ -29,7 +31,6 @@ kotlin {
             api(compose.runtime)
             api(compose.ui)
             implementation(compose.foundation)
-            implementation(libs.dropdown)
         }
 
         commonTest.dependencies {
@@ -37,7 +38,10 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.android.liquid.glass)
+            implementation(libs.androidx.annotation)
+            implementation(libs.jetbrains.annotations)
+            implementation(libs.kyant.shapes)
+            implementation(libs.kotlinx.coroutines.android)
         }
     }
 

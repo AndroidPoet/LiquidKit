@@ -30,6 +30,10 @@ import androidx.compose.ui.unit.sp
 import io.github.androidpoet.liquidkit.icon.LiquidIcon
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationScaffold
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
+import io.github.androidpoet.liquidkit.play.LiquidPlayButton
+import io.github.androidpoet.liquidkit.segmented.LiquidSegment
+import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
+import io.github.androidpoet.liquidkit.slider.LiquidSlider
 import io.github.androidpoet.liquidkit.toggle.LiquidToggle
 
 public enum class LiquidKitSampleTab(
@@ -65,6 +69,10 @@ public fun LiquidKitSampleTabContent(
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var compactModeEnabled by remember { mutableStateOf(false) }
+    var playbackEnabled by remember { mutableStateOf(false) }
+    var intensity by remember { mutableStateOf(0.58f) }
+    var density by remember { mutableStateOf(ControlDensity.Regular) }
+    val densitySegments = rememberControlDensitySegments()
 
     Column(
         modifier = modifier
@@ -86,6 +94,25 @@ public fun LiquidKitSampleTabContent(
             description = "Same common API, platform-native renderer underneath.",
             value = compactModeEnabled,
             onValueChange = { compactModeEnabled = it },
+        )
+        SliderRow(
+            label = "Intensity",
+            description = "Android uses AndroidLiquidGlass slider; iOS uses UISlider.",
+            value = intensity,
+            onValueChange = { intensity = it },
+        )
+        PlayRow(
+            label = "Playback",
+            description = "A glass play/pause control with a single common state.",
+            playing = playbackEnabled,
+            onPlayingChange = { playbackEnabled = it },
+        )
+        SegmentedRow(
+            label = "Density",
+            description = "Compact segmented choices with native UISegmentedControl on iOS.",
+            segments = densitySegments,
+            selected = density,
+            onSelected = { density = it },
         )
 
         Spacer(modifier = Modifier.height(96.dp))
@@ -144,9 +171,9 @@ private fun rememberLiquidKitNavigationItems(): List<LiquidNavigationItem<Liquid
 @Composable
 private fun Header(selectedTab: LiquidKitSampleTab) {
     val subtitle = when (selectedTab) {
-        LiquidKitSampleTab.Home -> "Bottom navigation and toggle only."
-        LiquidKitSampleTab.Search -> "Android uses the vendored AndroidLiquidGlass bottom tabs."
-        LiquidKitSampleTab.Settings -> "iOS uses native TabView, NavigationStack, and UISwitch controls."
+        LiquidKitSampleTab.Home -> "Bottom navigation, toggle, slider, play, and segmented controls."
+        LiquidKitSampleTab.Search -> "Android uses vendored AndroidLiquidGlass controls."
+        LiquidKitSampleTab.Settings -> "iOS uses native TabView, NavigationStack, and UIKit controls."
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -169,6 +196,25 @@ private fun Header(selectedTab: LiquidKitSampleTab) {
         )
     }
 }
+
+private enum class ControlDensity(
+    val title: String,
+) {
+    Compact("Compact"),
+    Regular("Regular"),
+    Spacious("Spacious"),
+}
+
+@Composable
+private fun rememberControlDensitySegments(): List<LiquidSegment<ControlDensity>> =
+    remember {
+        ControlDensity.entries.map { density ->
+            LiquidSegment(
+                key = density,
+                label = density.title,
+            )
+        }
+    }
 
 @Composable
 private fun ToggleRow(
@@ -207,6 +253,116 @@ private fun ToggleRow(
             checked = value,
             onCheckedChange = onValueChange,
             modifier = Modifier.size(width = 62.dp, height = 36.dp),
+        )
+    }
+}
+
+@Composable
+private fun SliderRow(
+    label: String,
+    description: String,
+    value: Float,
+    onValueChange: (Float) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LabelBlock(
+                label = label,
+                description = description,
+                modifier = Modifier.weight(1f),
+            )
+            BasicText(
+                text = "${(value * 100).toInt()}%",
+                style = TextStyle(
+                    color = Color(0xFF111820),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            )
+        }
+        LiquidSlider(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun PlayRow(
+    label: String,
+    description: String,
+    playing: Boolean,
+    onPlayingChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LabelBlock(
+            label = label,
+            description = description,
+            modifier = Modifier.weight(1f),
+        )
+        LiquidPlayButton(
+            playing = playing,
+            onPlayingChange = onPlayingChange,
+        )
+    }
+}
+
+@Composable
+private fun SegmentedRow(
+    label: String,
+    description: String,
+    segments: List<LiquidSegment<ControlDensity>>,
+    selected: ControlDensity,
+    onSelected: (ControlDensity) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        LabelBlock(
+            label = label,
+            description = description,
+        )
+        LiquidSegmentedControl(
+            segments = segments,
+            selectedKey = selected,
+            onSelected = onSelected,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun LabelBlock(
+    label: String,
+    description: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        BasicText(
+            text = label,
+            style = TextStyle(
+                color = Color(0xFF111820),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
+        BasicText(
+            text = description,
+            style = TextStyle(
+                color = Color(0xFF43515F),
+                fontSize = 13.sp,
+                lineHeight = 18.sp,
+            ),
         )
     }
 }

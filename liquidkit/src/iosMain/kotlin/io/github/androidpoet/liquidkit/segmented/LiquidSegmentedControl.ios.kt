@@ -17,11 +17,10 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import platform.Foundation.NSSelectorFromString
 import platform.UIKit.NSForegroundColorAttributeName
-import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventValueChanged
 import platform.UIKit.UIControlStateNormal
-import platform.UIKit.UIImage
 import platform.UIKit.UIControlStateSelected
+import platform.UIKit.UIImage
 import platform.UIKit.UISegmentedControl
 import platform.darwin.NSObject
 
@@ -46,11 +45,12 @@ internal actual fun <T : Any> PlatformLiquidSegmentedControl(
     style: LiquidGlassStyle,
 ) {
     val currentOnSelected = rememberUpdatedState(onSelected)
-    val target = remember {
-        LiquidSegmentedControlTarget { index ->
-            segments.getOrNull(index)?.key?.let(currentOnSelected.value)
+    val target =
+        remember {
+            LiquidSegmentedControlTarget { index ->
+                segments.getOrNull(index)?.key?.let(currentOnSelected.value)
+            }
         }
-    }
     target.onIndexSelected = { index ->
         segments.getOrNull(index)?.key?.let(currentOnSelected.value)
     }
@@ -71,11 +71,12 @@ internal actual fun <T : Any> PlatformLiquidSegmentedControl(
             segmentedControl.configureLiquidSegmentedControl(segments, selectedKey, enabled, style)
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }
 

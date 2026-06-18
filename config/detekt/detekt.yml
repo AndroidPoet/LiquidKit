@@ -1,0 +1,45 @@
+build:
+  maxIssues: 0
+
+complexity:
+  LongParameterList:
+    functionThreshold: 12
+    constructorThreshold: 14
+    ignoreDefaultParameters: true
+  LongMethod:
+    threshold: 120
+  LargeClass:
+    excludes: ['**/test/**', '**/*Test.kt', '**/commonTest/**']
+  TooManyFunctions:
+    active: false
+  CyclomaticComplexMethod:
+    threshold: 20
+
+style:
+  MagicNumber:
+    active: false
+  ReturnCount:
+    max: 6
+  MaxLineLength:
+    maxLineLength: 150
+  UnusedPrivateMember:
+    active: true
+  ForbiddenComment:
+    active: false
+
+naming:
+  FunctionNaming:
+    # Compose composables use PascalCase; iOS interop entry points mirror native names.
+    ignoreAnnotated: ['Composable']
+    active: false
+  MatchingDeclarationName:
+    # Several files intentionally group a component with its option/variant types.
+    active: false
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+  SwallowedException:
+    active: false
+  ThrowingExceptionsWithoutMessageOrCause:
+    active: false

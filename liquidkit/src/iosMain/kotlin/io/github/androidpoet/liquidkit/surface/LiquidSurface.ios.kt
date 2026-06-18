@@ -61,11 +61,12 @@ internal actual fun PlatformLiquidSurface(
                 view.layer.cornerRadius = cornerPx
             },
             onRelease = {},
-            properties = UIKitInteropProperties(
-                // Native glass sits behind Compose content; it must never intercept touches.
-                interactionMode = null,
-                isNativeAccessibilityEnabled = false,
-            ),
+            properties =
+                UIKitInteropProperties(
+                    // Native glass sits behind Compose content; it must never intercept touches.
+                    interactionMode = null,
+                    isNativeAccessibilityEnabled = false,
+                ),
         )
         // Compose content drawn on top of the native glass material.
         content()

@@ -2,13 +2,13 @@
 
 package io.github.androidpoet.liquidkit.dropdown
 
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.kyant.shapes.Capsule
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
@@ -57,7 +58,6 @@ import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.vi
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.highlight.Highlight
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.InnerShadow
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.Shadow
-import com.kyant.shapes.Capsule
 
 @Composable
 internal actual fun <T : Any> PlatformLiquidDropdownMenu(
@@ -93,15 +93,13 @@ internal actual fun <T : Any> PlatformLiquidDropdownMenu(
                     highlight = { Highlight.Default },
                     shadow = { Shadow(alpha = 0.12f) },
                     onDrawSurface = { drawRect(anchorSurface) },
-                )
-                .clickable(
+                ).clickable(
                     interactionSource = null,
                     indication = null,
                     enabled = enabled,
                     role = Role.DropdownList,
                     onClick = { expanded = true },
-                )
-                .height(44.dp)
+                ).height(44.dp)
                 .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -110,11 +108,12 @@ internal actual fun <T : Any> PlatformLiquidDropdownMenu(
                 text = label,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = TextStyle(
-                    color = style.selectedContentColor,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                style =
+                    TextStyle(
+                        color = style.selectedContentColor,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
             )
             BasicText(
                 text = "▾",
@@ -179,8 +178,7 @@ private fun <T : Any> DropdownGlassSurface(
                 shadow = { Shadow(alpha = 0.22f) },
                 innerShadow = { InnerShadow(radius = 6f.dp, alpha = 0.10f) },
                 onDrawSurface = { drawRect(menuSurface) },
-            )
-            .padding(6.dp),
+            ).padding(6.dp),
     ) {
         items.forEach { item ->
             val isSelected = selectedKey != null && item.key == selectedKey
@@ -194,8 +192,7 @@ private fun <T : Any> DropdownGlassSurface(
                         enabled = item.enabled,
                         role = Role.Button,
                         onClick = { onSelect(item.key) },
-                    )
-                    .alpha(if (item.enabled) 1f else 0.4f)
+                    ).alpha(if (item.enabled) 1f else 0.4f)
                     .padding(horizontal = 12.dp, vertical = 11.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -213,11 +210,12 @@ private fun <T : Any> DropdownGlassSurface(
                     modifier = Modifier.weight(1f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = TextStyle(
-                        color = contentColor,
-                        fontSize = 15.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                    ),
+                    style =
+                        TextStyle(
+                            color = contentColor,
+                            fontSize = 15.sp,
+                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                        ),
                 )
                 Spacer(Modifier.width(8.dp))
                 if (isSelected) {

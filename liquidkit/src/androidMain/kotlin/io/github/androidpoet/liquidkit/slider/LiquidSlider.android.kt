@@ -5,11 +5,11 @@ package io.github.androidpoet.liquidkit.slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.LayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCanvasBackdrop
-import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.components.LiquidSlider
 
 @Composable

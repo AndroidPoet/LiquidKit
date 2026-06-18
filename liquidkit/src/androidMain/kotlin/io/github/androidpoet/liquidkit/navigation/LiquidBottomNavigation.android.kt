@@ -25,13 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.LayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCanvasBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.components.LiquidBottomTab
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.components.LiquidBottomTabs
-import io.github.androidpoet.liquidkit.LiquidGlassStyle
 
 @Composable
 internal actual fun <T : Any> PlatformLiquidBottomNavigation(
@@ -53,9 +53,10 @@ internal actual fun <T : Any> PlatformLiquidBottomNavigation(
         },
         backdrop = backdrop,
         tabsCount = items.size,
-        modifier = modifier
-            .fillMaxWidth()
-        .height(64.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(64.dp),
     ) {
         items.forEach { item ->
             LiquidBottomTab(onClick = { onSelected(item.key) }) {
@@ -102,11 +103,12 @@ private fun <T : Any> LiquidBottomNavigationItem(
             text = item.label,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = TextStyle(
-                color = contentColor,
-                fontSize = 12.sp,
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-            ),
+            style =
+                TextStyle(
+                    color = contentColor,
+                    fontSize = 12.sp,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                ),
         )
     }
 }
@@ -115,25 +117,28 @@ private fun <T : Any> LiquidBottomNavigationItem(
 private fun BadgeIndicator(badge: Int, modifier: Modifier = Modifier) {
     if (badge == 0) {
         Box(
-            modifier = modifier
-                .size(8.dp)
-                .background(Color(0xFFFF3B30), CircleShape),
+            modifier =
+                modifier
+                    .size(8.dp)
+                    .background(Color(0xFFFF3B30), CircleShape),
         )
     } else {
         val count = badge.coerceAtMost(99)
         Box(
-            modifier = modifier
-                .background(Color(0xFFFF3B30), CircleShape)
-                .padding(horizontal = 3.dp, vertical = 1.dp),
+            modifier =
+                modifier
+                    .background(Color(0xFFFF3B30), CircleShape)
+                    .padding(horizontal = 3.dp, vertical = 1.dp),
             contentAlignment = Alignment.Center,
         ) {
             BasicText(
                 text = count.toString(),
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
+                style =
+                    TextStyle(
+                        color = Color.White,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
             )
         }
     }

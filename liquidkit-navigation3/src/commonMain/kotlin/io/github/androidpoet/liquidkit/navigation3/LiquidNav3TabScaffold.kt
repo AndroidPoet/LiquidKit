@@ -14,10 +14,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.androidpoet.liquidkit.internal.InternalLiquidKitApi
-import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
-import io.github.androidpoet.liquidkit.internal.captureToLiquidLayerBackdrop
-import io.github.androidpoet.liquidkit.internal.rememberLiquidLayerBackdrop
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -28,6 +24,10 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 import androidx.savedstate.serialization.SavedStateConfiguration
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
+import io.github.androidpoet.liquidkit.internal.InternalLiquidKitApi
+import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.captureToLiquidLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.rememberLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.navigation.LiquidBottomNavigation
 import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
 import kotlinx.serialization.PolymorphicSerializer
@@ -49,11 +49,12 @@ public open class LiquidNav3State internal constructor(
         get() = backStacks[selectedRoute] ?: error("Stack for $selectedRoute not found.")
 
     internal val stacksInUse: List<NavKey>
-        get() = if (selectedRoute == startRoute) {
-            listOf(startRoute)
-        } else {
-            listOf(startRoute, selectedRoute)
-        }
+        get() =
+            if (selectedRoute == startRoute) {
+                listOf(startRoute)
+            } else {
+                listOf(startRoute, selectedRoute)
+            }
 
     public fun backStack(route: NavKey): NavBackStack<NavKey> =
         backStacks[route] ?: error("Stack for $route not found.")
@@ -101,11 +102,11 @@ public class LiquidNav3TabState internal constructor(
     selectedRoute: MutableState<NavKey>,
     backStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) : LiquidNav3State(
-    startRoute = startRoute,
-    topLevelRoutes = topLevelRoutes,
-    selectedRoute = selectedRoute,
-    backStacks = backStacks,
-)
+        startRoute = startRoute,
+        topLevelRoutes = topLevelRoutes,
+        selectedRoute = selectedRoute,
+        backStacks = backStacks,
+    )
 
 @Composable
 public fun rememberLiquidNav3State(
@@ -117,17 +118,19 @@ public fun rememberLiquidNav3State(
     require(startRoute in topLevelRoutes) { "startRoute must be one of the top-level routes." }
 
     val rootRoutes = remember(topLevelRoutes) { topLevelRoutes.toSet() }
-    val selectedRoute = rememberSerializable(
-        startRoute,
-        rootRoutes,
-        configuration = savedStateConfiguration,
-        serializer = MutableStateSerializer(PolymorphicSerializer(NavKey::class)),
-    ) {
-        androidx.compose.runtime.mutableStateOf(startRoute)
-    }
-    val backStacks = rootRoutes.associateWith { route ->
-        rememberNavBackStack(savedStateConfiguration, route)
-    }
+    val selectedRoute =
+        rememberSerializable(
+            startRoute,
+            rootRoutes,
+            configuration = savedStateConfiguration,
+            serializer = MutableStateSerializer(PolymorphicSerializer(NavKey::class)),
+        ) {
+            androidx.compose.runtime.mutableStateOf(startRoute)
+        }
+    val backStacks =
+        rootRoutes.associateWith { route ->
+            rememberNavBackStack(savedStateConfiguration, route)
+        }
 
     return remember(startRoute, rootRoutes) {
         LiquidNav3State(
@@ -149,17 +152,19 @@ public fun rememberLiquidNav3TabState(
     require(items.any { it.key == startRoute }) { "startRoute must be one of the tab item keys." }
 
     val rootRoutes = remember(items) { items.map { it.key }.toSet() }
-    val selectedRoute = rememberSerializable(
-        startRoute,
-        rootRoutes,
-        configuration = savedStateConfiguration,
-        serializer = MutableStateSerializer(PolymorphicSerializer(NavKey::class)),
-    ) {
-        androidx.compose.runtime.mutableStateOf(startRoute)
-    }
-    val backStacks = rootRoutes.associateWith { route ->
-        rememberNavBackStack(savedStateConfiguration, route)
-    }
+    val selectedRoute =
+        rememberSerializable(
+            startRoute,
+            rootRoutes,
+            configuration = savedStateConfiguration,
+            serializer = MutableStateSerializer(PolymorphicSerializer(NavKey::class)),
+        ) {
+            androidx.compose.runtime.mutableStateOf(startRoute)
+        }
+    val backStacks =
+        rootRoutes.associateWith { route ->
+            rememberNavBackStack(savedStateConfiguration, route)
+        }
 
     return remember(startRoute, rootRoutes) {
         LiquidNav3TabState(
@@ -176,13 +181,14 @@ public fun rememberLiquidNav3Entries(
     state: LiquidNav3State,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
 ): SnapshotStateList<NavEntry<NavKey>> {
-    val decoratedEntries = state.backStacks.mapValues { (_, stack) ->
-        rememberDecoratedNavEntries(
-            backStack = stack,
-            entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator()),
-            entryProvider = entryProvider,
-        )
-    }
+    val decoratedEntries =
+        state.backStacks.mapValues { (_, stack) ->
+            rememberDecoratedNavEntries(
+                backStack = stack,
+                entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator()),
+                entryProvider = entryProvider,
+            )
+        }
 
     return state.stacksInUse
         .flatMap { route -> decoratedEntries[route] ?: emptyList() }
@@ -211,11 +217,12 @@ public fun LiquidNav3TabScaffold(
         )
     },
 ) {
-    val state = rememberLiquidNav3TabState(
-        items = items,
-        startRoute = startRoute,
-        savedStateConfiguration = savedStateConfiguration,
-    )
+    val state =
+        rememberLiquidNav3TabState(
+            items = items,
+            startRoute = startRoute,
+            savedStateConfiguration = savedStateConfiguration,
+        )
 
     LiquidNav3TabScaffold(
         items = items,
@@ -277,10 +284,11 @@ public fun BoxScope.LiquidNav3TabContent(
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
-        entries = rememberLiquidNav3Entries(
-            state = state,
-            entryProvider = entryProvider,
-        ),
+        entries =
+            rememberLiquidNav3Entries(
+                state = state,
+                entryProvider = entryProvider,
+            ),
         onBack = state::goBack,
         modifier = modifier,
     )

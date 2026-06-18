@@ -28,7 +28,8 @@ import platform.darwin.NSObject
 private class LiquidSearchFieldTarget(
     var onQueryChange: (String) -> Unit,
     var onSearch: (String) -> Unit,
-) : NSObject(), UITextFieldDelegateProtocol {
+) : NSObject(),
+    UITextFieldDelegateProtocol {
     @ObjCAction
     fun editingChanged(sender: UITextField) {
         onQueryChange(sender.text ?: "")
@@ -55,12 +56,13 @@ internal actual fun PlatformLiquidSearchField(
 ) {
     val currentOnQueryChange = rememberUpdatedState(onQueryChange)
     val currentOnSearch = rememberUpdatedState(onSearch)
-    val target = remember {
-        LiquidSearchFieldTarget(
-            onQueryChange = { currentOnQueryChange.value(it) },
-            onSearch = { currentOnSearch.value(it) },
-        )
-    }
+    val target =
+        remember {
+            LiquidSearchFieldTarget(
+                onQueryChange = { currentOnQueryChange.value(it) },
+                onSearch = { currentOnSearch.value(it) },
+            )
+        }
     target.onQueryChange = { currentOnQueryChange.value(it) }
     target.onSearch = { currentOnSearch.value(it) }
 
@@ -92,10 +94,11 @@ internal actual fun PlatformLiquidSearchField(
             field.textColor = style.selectedContentColor.toUIColor()
         },
         onRelease = { it.resignFirstResponder() },
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

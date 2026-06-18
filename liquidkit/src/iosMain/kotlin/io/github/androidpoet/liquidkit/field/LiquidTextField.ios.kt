@@ -21,8 +21,8 @@ import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventEditingChanged
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageView
-import platform.UIKit.UITextField
 import platform.UIKit.UITextBorderStyle
+import platform.UIKit.UITextField
 import platform.UIKit.UITextFieldViewMode
 import platform.UIKit.UIView
 import platform.darwin.NSObject
@@ -89,13 +89,14 @@ internal actual fun PlatformLiquidTextField(
             field.textColor = style.selectedContentColor.toUIColor()
         },
         onRelease = { it.resignFirstResponder() },
-        properties = UIKitInteropProperties(
-            // Cooperative + overlay lets the native field receive taps and become first responder,
-            // so the system keyboard shows and typing works without manual focus wiring.
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                // Cooperative + overlay lets the native field receive taps and become first responder,
+                // so the system keyboard shows and typing works without manual focus wiring.
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }
 

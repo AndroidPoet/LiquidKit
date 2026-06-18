@@ -1,0 +1,29 @@
+---
+title: Surfaces
+description: LiquidSurface and LiquidGlassContainer — the building-block glass surfaces of LiquidKit.
+---
+
+# Surfaces
+
+`LiquidSurface` is a single glass surface you can place behind any content; `LiquidGlassContainer`
+groups multiple surfaces so they share a consistent backdrop.
+
+```kotlin
+import io.github.androidpoet.liquidkit.surface.LiquidSurface
+import io.github.androidpoet.liquidkit.surface.LiquidGlassContainer
+
+@Composable
+fun Surfaces() {
+    LiquidGlassContainer {
+        LiquidSurface(interactive = true) {
+            Text("Frosted content on glass")
+        }
+    }
+}
+```
+
+## Android vs iOS
+
+- **Android** — the surface is rendered by the internal backdrop / refraction shader engine.
+- **iOS** — backed by a `UIVisualEffectView`. On iOS 26 it uses the typed `UIGlassEffect`
+  (with tint and interactivity); earlier versions fall back to a `UIBlurEffect` `systemMaterial`.

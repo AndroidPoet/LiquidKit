@@ -4,14 +4,17 @@ package io.github.androidpoet.liquidkit.segmented
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,27 +23,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import com.kyant.shapes.Capsule
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.LayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCanvasBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCombinedBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberLayerBackdrop
-import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.lens
@@ -48,7 +48,6 @@ import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.vi
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.highlight.Highlight
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.InnerShadow
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.Shadow
-import com.kyant.shapes.Capsule
 
 @Composable
 internal actual fun <T : Any> PlatformLiquidSegmentedControl(
@@ -99,8 +98,7 @@ internal actual fun <T : Any> PlatformLiquidSegmentedControl(
                         lens(8f.dp.toPx(), 16f.dp.toPx())
                     },
                     onDrawSurface = { drawRect(containerColor) },
-                )
-                .height(40.dp)
+                ).height(40.dp)
                 .fillMaxWidth()
                 .padding(3.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -136,11 +134,12 @@ internal actual fun <T : Any> PlatformLiquidSegmentedControl(
                             text = segment.label,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            style = TextStyle(
-                                color = contentColor,
-                                fontSize = 13.sp,
-                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                            ),
+                            style =
+                                TextStyle(
+                                    color = contentColor,
+                                    fontSize = 13.sp,
+                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                                ),
                         )
                     }
                 }
@@ -164,8 +163,7 @@ internal actual fun <T : Any> PlatformLiquidSegmentedControl(
                         val surfaceColor = if (isLight) Color.Black.copy(0.06f) else Color.White.copy(0.06f)
                         drawRect(surfaceColor)
                     },
-                )
-                .height(34.dp)
+                ).height(34.dp)
                 .fillMaxWidth(1f / segCount),
         )
     }

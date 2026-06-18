@@ -39,15 +39,15 @@ public fun FieldShowcase(modifier: Modifier = Modifier) {
     var lastSearch by remember { mutableStateOf("") }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFF1B3A6B), Color(0xFF6B3A8C), Color(0xFFB0507A)),
-                ),
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF1B3A6B), Color(0xFF6B3A8C), Color(0xFFB0507A)),
+                    ),
+                ).verticalScroll(rememberScrollState())
+                .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SectionTitle("Liquid Glass Fields")
@@ -102,10 +102,11 @@ private fun SectionTitle(text: String) {
 private fun SectionLabel(text: String) {
     BasicText(
         text = text,
-        style = TextStyle(
-            color = Color.White.copy(alpha = 0.7f),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-        ),
+        style =
+            TextStyle(
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+            ),
     )
 }

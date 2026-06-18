@@ -49,9 +49,10 @@ internal actual fun PlatformLiquidButton(
     UIKitView(
         factory = {
             UIButton().apply {
-                configuration = glassButtonConfigurationFor(
-                    prominent = variant == LiquidButtonVariant.GlassProminent,
-                )
+                configuration =
+                    glassButtonConfigurationFor(
+                        prominent = variant == LiquidButtonVariant.GlassProminent,
+                    )
                 setTitle(text, forState = UIControlStateNormal)
                 this.enabled = enabled
                 backgroundColor = UIColor.clearColor
@@ -69,10 +70,11 @@ internal actual fun PlatformLiquidButton(
             button.enabled = enabled
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

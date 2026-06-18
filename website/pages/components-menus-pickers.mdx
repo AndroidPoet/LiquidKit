@@ -1,0 +1,39 @@
+---
+title: Menus & Pickers
+description: LiquidDropdownMenu and LiquidPicker — selection controls backed by native UIMenu and UIPickerView on iOS.
+---
+
+# Menus & Pickers
+
+`LiquidDropdownMenu` shows a list of `LiquidMenuItem`s from an anchor, and `LiquidPicker` presents
+a set of `LiquidPickerOption`s for single selection.
+
+```kotlin
+import io.github.androidpoet.liquidkit.dropdown.LiquidDropdownMenu
+import io.github.androidpoet.liquidkit.dropdown.LiquidMenuItem
+import io.github.androidpoet.liquidkit.picker.LiquidPicker
+import io.github.androidpoet.liquidkit.picker.LiquidPickerOption
+
+@Composable
+fun MenusAndPickers() {
+    val items = SortOrder.entries.map { LiquidMenuItem(key = it, label = it.label) }
+    LiquidDropdownMenu(
+        items = items,
+        selectedKey = sort,
+        onSelected = { sort = it },
+    )
+
+    val options = TimeZone.entries.map { LiquidPickerOption(key = it, label = it.label) }
+    LiquidPicker(
+        options = options,
+        selectedKey = zone,
+        onSelected = { zone = it },
+    )
+}
+```
+
+## Android vs iOS
+
+- **Android** — rendered as Liquid Glass surfaces by the shader engine.
+- **iOS** — uses genuine native `UIButton` + `UIMenu` for the dropdown and `UIPickerView` for the
+  picker, so they behave exactly like system controls.

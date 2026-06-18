@@ -3,11 +3,11 @@ package io.github.androidpoet.liquidkit.navigation3
 import androidx.compose.runtime.mutableStateOf
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.serialization.Serializable
 
 class LiquidNav3StateTest {
     @Test
@@ -74,10 +74,11 @@ class LiquidNav3StateTest {
             startRoute = HomeRoute,
             topLevelRoutes = setOf(HomeRoute, SearchRoute),
             selectedRoute = mutableStateOf(selectedRoute),
-            backStacks = mapOf(
-                HomeRoute to NavBackStack(HomeRoute),
-                SearchRoute to NavBackStack(SearchRoute),
-            ),
+            backStacks =
+                mapOf(
+                    HomeRoute to NavBackStack(HomeRoute),
+                    SearchRoute to NavBackStack(SearchRoute),
+                ),
         )
 }
 

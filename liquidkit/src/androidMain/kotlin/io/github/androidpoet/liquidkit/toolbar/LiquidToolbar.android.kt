@@ -37,20 +37,20 @@ internal actual fun PlatformLiquidToolbar(
     val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else canvasBackdrop
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .drawBackdrop(
-                backdrop = backdrop,
-                shape = { RoundedCornerShape(style.cornerRadius) },
-                effects = {
-                    vibrancy()
-                    blur(8f.dp.toPx())
-                    lens(20f.dp.toPx(), 20f.dp.toPx())
-                },
-                onDrawSurface = { drawRect(style.containerColor) },
-            )
-            .padding(horizontal = 12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { RoundedCornerShape(style.cornerRadius) },
+                    effects = {
+                        vibrancy()
+                        blur(8f.dp.toPx())
+                        lens(20f.dp.toPx(), 20f.dp.toPx())
+                    },
+                    onDrawSurface = { drawRect(style.containerColor) },
+                ).padding(horizontal = 12.dp),
         contentAlignment = Alignment.Center,
     ) {
         // Leading + trailing action slots pinned to the edges.

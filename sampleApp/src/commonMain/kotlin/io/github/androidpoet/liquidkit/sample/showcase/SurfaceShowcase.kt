@@ -37,30 +37,33 @@ public fun SurfaceShowcase(modifier: Modifier = Modifier) {
     var interactive by remember { mutableStateOf(true) }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(showcaseBackground())
-            .safeDrawingPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 28.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(showcaseBackground())
+                .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 28.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         BasicText(
             text = "Liquid Surface",
             modifier = Modifier.fillMaxWidth(),
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-            ),
+            style =
+                TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
         )
 
         // A simple glass card with content on top.
         LiquidSurface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
         ) {
             CardLabel(
                 title = "Default card",
@@ -70,9 +73,10 @@ public fun SurfaceShowcase(modifier: Modifier = Modifier) {
 
         // Tinted, interactive glass card.
         LiquidSurface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
             shape = RoundedCornerShape(36.dp),
             tint = Color(0xFF4FC3F7),
             interactive = interactive,
@@ -85,24 +89,27 @@ public fun SurfaceShowcase(modifier: Modifier = Modifier) {
 
         // A container grouping two glass children that share one sampling region (Android).
         LiquidGlassContainer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(160.dp),
         ) {
             LiquidSurface(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(120.dp)
-                    .align(Alignment.CenterStart),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(120.dp)
+                        .align(Alignment.CenterStart),
                 tint = Color(0xFFFFB74D),
             ) {
                 CardLabel(title = "Grouped A", subtitle = "Shared region")
             }
             LiquidSurface(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(120.dp)
-                    .align(Alignment.CenterEnd),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(120.dp)
+                        .align(Alignment.CenterEnd),
                 tint = Color(0xFFBA68C8),
             ) {
                 CardLabel(title = "Grouped B", subtitle = "Shared region")
@@ -117,34 +124,39 @@ private fun CardLabel(
     subtitle: String,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(18.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(18.dp),
         verticalArrangement = Arrangement.Center,
     ) {
         BasicText(
             text = title,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
+            style =
+                TextStyle(
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
         BasicText(
             text = subtitle,
-            style = TextStyle(
-                color = Color.White.copy(alpha = 0.85f),
-                fontSize = 13.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color.White.copy(alpha = 0.85f),
+                    fontSize = 13.sp,
+                ),
         )
     }
 }
 
-private fun showcaseBackground(): Brush = Brush.linearGradient(
-    colors = listOf(
-        Color(0xFF1A237E),
-        Color(0xFF6A1B9A),
-        Color(0xFFAD1457),
-        Color(0xFFEF6C00),
-    ),
-)
+private fun showcaseBackground(): Brush =
+    Brush.linearGradient(
+        colors =
+            listOf(
+                Color(0xFF1A237E),
+                Color(0xFF6A1B9A),
+                Color(0xFFAD1457),
+                Color(0xFFEF6C00),
+            ),
+    )

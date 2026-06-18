@@ -5,8 +5,8 @@ package io.github.androidpoet.liquidkit.button
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,11 +44,12 @@ internal actual fun PlatformLiquidButton(
         BasicText(
             text = text,
             modifier = Modifier.padding(horizontal = 4.dp),
-            style = TextStyle(
-                color = labelColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
+            style =
+                TextStyle(
+                    color = labelColor,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
     }
 }

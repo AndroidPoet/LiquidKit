@@ -2,7 +2,9 @@ package io.github.androidpoet.liquidkit.sample
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -25,24 +28,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.androidpoet.liquidkit.icon.LiquidIcon
-import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
-import io.github.androidpoet.liquidkit.navigation3.LiquidNav3TabScaffold
-import io.github.androidpoet.liquidkit.segmented.LiquidSegment
-import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
-import io.github.androidpoet.liquidkit.slider.LiquidSlider
-import io.github.androidpoet.liquidkit.toggle.LiquidToggle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.savedstate.serialization.SavedStateConfiguration
+import io.github.androidpoet.liquidkit.icon.LiquidIcon
+import io.github.androidpoet.liquidkit.navigation.LiquidNavigationItem
+import io.github.androidpoet.liquidkit.navigation3.LiquidNav3TabScaffold
+import io.github.androidpoet.liquidkit.sample.showcase.ShowcaseEntry
+import io.github.androidpoet.liquidkit.sample.showcase.ShowcaseEntryContent
+import io.github.androidpoet.liquidkit.segmented.LiquidSegment
+import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
+import io.github.androidpoet.liquidkit.slider.LiquidSlider
+import io.github.androidpoet.liquidkit.toggle.LiquidToggle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -65,55 +69,115 @@ fun LiquidKitSampleApp(modifier: Modifier = Modifier) {
 @Composable
 public fun LiquidKitComposeOwnedTabShell(modifier: Modifier = Modifier) {
     val items = rememberLiquidKitTabItems()
-    val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider<NavKey> {
-        entry<LiquidKitHomeRoute> {
-            LiquidKitSampleTabRoot(selectedTab = LiquidKitSampleTab.Home)
+    var openShowcase by remember { mutableStateOf<ShowcaseEntry?>(null) }
+    val onOpenShowcase: (ShowcaseEntry) -> Unit = { openShowcase = it }
+
+    val entryProvider: (NavKey) -> NavEntry<NavKey> =
+        entryProvider<NavKey> {
+            entry<LiquidKitHomeRoute> {
+                LiquidKitSampleTabRoot(
+                    selectedTab = LiquidKitSampleTab.Home,
+                    onOpenShowcase = onOpenShowcase,
+                )
+            }
+            entry<LiquidKitSearchRoute> {
+                LiquidKitSampleTabRoot(
+                    selectedTab = LiquidKitSampleTab.Search,
+                    onOpenShowcase = onOpenShowcase,
+                )
+            }
+            entry<LiquidKitSettingsRoute> {
+                LiquidKitSampleTabRoot(
+                    selectedTab = LiquidKitSampleTab.Settings,
+                    onOpenShowcase = onOpenShowcase,
+                )
+            }
         }
-        entry<LiquidKitSearchRoute> {
-            LiquidKitSampleTabRoot(selectedTab = LiquidKitSampleTab.Search)
-        }
-        entry<LiquidKitSettingsRoute> {
-            LiquidKitSampleTabRoot(selectedTab = LiquidKitSampleTab.Settings)
+
+    Box(modifier = modifier.fillMaxSize()) {
+        LiquidNav3TabScaffold(
+            items = items,
+            entryProvider = entryProvider,
+            savedStateConfiguration = liquidKitNav3SavedStateConfiguration,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(sampleBackground()),
+            navigationModifier =
+                Modifier
+                    .navigationBarsPadding()
+                    .padding(16.dp),
+        )
+
+        val showcase = openShowcase
+        if (showcase != null) {
+            Box(modifier = Modifier.fillMaxSize().background(sampleBackground())) {
+                ShowcaseEntryContent(showcase, modifier = Modifier.fillMaxSize())
+                ShowcaseBackChip(
+                    onClick = { openShowcase = null },
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopStart)
+                            .safeDrawingPadding()
+                            .padding(16.dp),
+                )
+            }
         }
     }
+}
 
-    LiquidNav3TabScaffold(
-        items = items,
-        entryProvider = entryProvider,
-        savedStateConfiguration = liquidKitNav3SavedStateConfiguration,
-        modifier = modifier
-            .fillMaxSize()
-            .background(sampleBackground()),
-        navigationModifier = Modifier
-            .navigationBarsPadding()
-            .padding(16.dp),
-    )
+@Composable
+private fun ShowcaseBackChip(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .background(Color(0xCC0A0A0A), RoundedCornerShape(20.dp))
+                .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(20.dp))
+                .clickable(onClick = onClick)
+                .padding(horizontal = 18.dp, vertical = 10.dp),
+    ) {
+        BasicText(
+            text = "‹ Back",
+            style =
+                TextStyle(
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+        )
+    }
 }
 
 @Composable
 public fun LiquidKitSampleTabContent(
     selectedTab: LiquidKitSampleTab,
     modifier: Modifier = Modifier,
+    onOpenShowcase: (ShowcaseEntry) -> Unit = {},
     extraContent: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .safeDrawingPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 30.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Header(
             selectedTab = selectedTab,
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 620.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 620.dp),
         )
 
         when (selectedTab) {
-            LiquidKitSampleTab.Home -> HomeSamplePanel()
+            LiquidKitSampleTab.Home -> HomeSamplePanel(onOpenShowcase = onOpenShowcase)
             LiquidKitSampleTab.Search -> ControlsSamplePanel()
             LiquidKitSampleTab.Settings -> SettingsSamplePanel()
         }
@@ -128,41 +192,47 @@ public fun LiquidKitSampleTabContent(
 public fun LiquidKitSampleTabRoot(
     selectedTab: LiquidKitSampleTab,
     modifier: Modifier = Modifier,
+    onOpenShowcase: (ShowcaseEntry) -> Unit = {},
 ) {
     LiquidKitSampleTabContent(
         selectedTab = selectedTab,
-        modifier = modifier
-            .fillMaxSize()
-            .background(sampleBackground()),
+        onOpenShowcase = onOpenShowcase,
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(sampleBackground()),
     )
 }
 
 @Composable
-private fun HomeSamplePanel() {
+private fun HomeSamplePanel(onOpenShowcase: (ShowcaseEntry) -> Unit = {}) {
     var enabled by remember { mutableStateOf(true) }
     var intensity by remember { mutableStateOf(0.58f) }
 
     InvertedPanel(
-        modifier = Modifier
-            .fillMaxWidth()
-            .widthIn(max = 620.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
     ) {
         BasicText(
             text = "One API. Native ownership.",
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 28.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color.White,
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 28.sp,
+                ),
         )
         BasicText(
             text = "Android renders Kyant-style liquid controls. iOS keeps native tab ownership.",
-            style = TextStyle(
-                color = Color(0xFFD7D7D7),
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFFD7D7D7),
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                ),
         )
         Spacer(modifier = Modifier.height(10.dp))
         InvertedMetricRow(label = "Tab layer", value = "Nav3")
@@ -170,9 +240,28 @@ private fun HomeSamplePanel() {
     }
 
     ComponentPanel(
-        modifier = Modifier
-            .fillMaxWidth()
-            .widthIn(max = 620.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
+    ) {
+        PanelSectionTitle(
+            title = "Component gallery",
+            description =
+                "Open any group full-screen. Each is a self-contained showcase " +
+                    "(Android shader glass, iOS native controls).",
+        )
+        ShowcaseEntry.entries.forEach { entry ->
+            PanelDivider()
+            ShowcaseGalleryRow(entry = entry, onClick = { onOpenShowcase(entry) })
+        }
+    }
+
+    ComponentPanel(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
     ) {
         PanelSectionTitle(
             title = "Home controls",
@@ -207,9 +296,10 @@ private fun ControlsSamplePanel() {
     val densitySegments = rememberControlDensitySegments()
 
     ComponentPanel(
-        modifier = Modifier
-            .fillMaxWidth()
-            .widthIn(max = 620.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
     ) {
         PanelSectionTitle(
             title = "Controls lab",
@@ -248,9 +338,10 @@ private fun SettingsSamplePanel() {
     val densitySegments = rememberControlDensitySegments()
 
     ComponentPanel(
-        modifier = Modifier
-            .fillMaxWidth()
-            .widthIn(max = 620.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp),
     ) {
         PanelSectionTitle(
             title = "Library settings",
@@ -292,15 +383,17 @@ private data object LiquidKitSearchRoute : NavKey
 @Serializable
 private data object LiquidKitSettingsRoute : NavKey
 
-private val liquidKitNav3SavedStateConfiguration = SavedStateConfiguration {
-    serializersModule = SerializersModule {
-        polymorphic(NavKey::class) {
-            subclass(LiquidKitHomeRoute::class, LiquidKitHomeRoute.serializer())
-            subclass(LiquidKitSearchRoute::class, LiquidKitSearchRoute.serializer())
-            subclass(LiquidKitSettingsRoute::class, LiquidKitSettingsRoute.serializer())
-        }
+private val liquidKitNav3SavedStateConfiguration =
+    SavedStateConfiguration {
+        serializersModule =
+            SerializersModule {
+                polymorphic(NavKey::class) {
+                    subclass(LiquidKitHomeRoute::class, LiquidKitHomeRoute.serializer())
+                    subclass(LiquidKitSearchRoute::class, LiquidKitSearchRoute.serializer())
+                    subclass(LiquidKitSettingsRoute::class, LiquidKitSettingsRoute.serializer())
+                }
+            }
     }
-}
 
 @Composable
 private fun rememberLiquidKitTabItems(): List<LiquidNavigationItem<NavKey>> =
@@ -309,31 +402,34 @@ private fun rememberLiquidKitTabItems(): List<LiquidNavigationItem<NavKey>> =
             LiquidNavigationItem(
                 key = LiquidKitHomeRoute,
                 label = LiquidKitSampleTab.Home.title,
-                icon = LiquidIcon(
-                    imageVector = SampleIcons.Home,
-                    contentDescription = LiquidKitSampleTab.Home.title,
-                    iosSystemName = LiquidKitSampleTab.Home.iosSystemImage,
-                    selectedIosSystemName = "house.fill",
-                ),
+                icon =
+                    LiquidIcon(
+                        imageVector = SampleIcons.Home,
+                        contentDescription = LiquidKitSampleTab.Home.title,
+                        iosSystemName = LiquidKitSampleTab.Home.iosSystemImage,
+                        selectedIosSystemName = "house.fill",
+                    ),
             ),
             LiquidNavigationItem(
                 key = LiquidKitSearchRoute,
                 label = LiquidKitSampleTab.Search.title,
-                icon = LiquidIcon(
-                    imageVector = SampleIcons.Controls,
-                    contentDescription = LiquidKitSampleTab.Search.title,
-                    iosSystemName = LiquidKitSampleTab.Search.iosSystemImage,
-                ),
+                icon =
+                    LiquidIcon(
+                        imageVector = SampleIcons.Controls,
+                        contentDescription = LiquidKitSampleTab.Search.title,
+                        iosSystemName = LiquidKitSampleTab.Search.iosSystemImage,
+                    ),
             ),
             LiquidNavigationItem(
                 key = LiquidKitSettingsRoute,
                 label = LiquidKitSampleTab.Settings.title,
-                icon = LiquidIcon(
-                    imageVector = SampleIcons.Menu,
-                    contentDescription = LiquidKitSampleTab.Settings.title,
-                    iosSystemName = LiquidKitSampleTab.Settings.iosSystemImage,
-                    selectedIosSystemName = "gearshape.fill",
-                ),
+                icon =
+                    LiquidIcon(
+                        imageVector = SampleIcons.Menu,
+                        contentDescription = LiquidKitSampleTab.Settings.title,
+                        iosSystemName = LiquidKitSampleTab.Settings.iosSystemImage,
+                        selectedIosSystemName = "gearshape.fill",
+                    ),
             ),
         )
     }
@@ -343,16 +439,18 @@ private fun Header(
     selectedTab: LiquidKitSampleTab,
     modifier: Modifier = Modifier,
 ) {
-    val title = when (selectedTab) {
-        LiquidKitSampleTab.Home -> "LiquidKit Home"
-        LiquidKitSampleTab.Search -> "Controls Lab"
-        LiquidKitSampleTab.Settings -> "Settings"
-    }
-    val subtitle = when (selectedTab) {
-        LiquidKitSampleTab.Home -> "Bottom navigation with a single moving liquid selection."
-        LiquidKitSampleTab.Search -> "Android controls rendered by vendored AndroidLiquidGlass."
-        LiquidKitSampleTab.Settings -> "Platform ownership stays simple: SwiftUI tabs on iOS, Compose tabs on Android."
-    }
+    val title =
+        when (selectedTab) {
+            LiquidKitSampleTab.Home -> "LiquidKit Home"
+            LiquidKitSampleTab.Search -> "Controls Lab"
+            LiquidKitSampleTab.Settings -> "Settings"
+        }
+    val subtitle =
+        when (selectedTab) {
+            LiquidKitSampleTab.Home -> "Bottom navigation with a single moving liquid selection."
+            LiquidKitSampleTab.Search -> "Android controls rendered by vendored AndroidLiquidGlass."
+            LiquidKitSampleTab.Settings -> "Platform ownership stays simple: SwiftUI tabs on iOS, Compose tabs on Android."
+        }
 
     Column(
         modifier = modifier,
@@ -360,20 +458,22 @@ private fun Header(
     ) {
         BasicText(
             text = title,
-            style = TextStyle(
-                color = Color(0xFF070707),
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 38.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF070707),
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 38.sp,
+                ),
         )
         BasicText(
             text = subtitle,
-            style = TextStyle(
-                color = Color(0xFF4A4A4A),
-                fontSize = 15.sp,
-                lineHeight = 21.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF4A4A4A),
+                    fontSize = 15.sp,
+                    lineHeight = 21.sp,
+                ),
         )
     }
 }
@@ -384,17 +484,16 @@ private fun InvertedPanel(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .background(
-                color = Color(0xFF080808),
-                shape = RoundedCornerShape(32.dp),
-            )
-            .border(
-                width = 1.dp,
-                color = Color(0xFF2A2A2A),
-                shape = RoundedCornerShape(32.dp),
-            )
-            .padding(22.dp),
+        modifier =
+            modifier
+                .background(
+                    color = Color(0xFF080808),
+                    shape = RoundedCornerShape(32.dp),
+                ).border(
+                    width = 1.dp,
+                    color = Color(0xFF2A2A2A),
+                    shape = RoundedCornerShape(32.dp),
+                ).padding(22.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         content = content,
     )
@@ -413,18 +512,20 @@ private fun InvertedMetricRow(
         BasicText(
             text = label,
             modifier = Modifier.weight(1f),
-            style = TextStyle(
-                color = Color(0xFFAFAFAF),
-                fontSize = 14.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFFAFAFAF),
+                    fontSize = 14.sp,
+                ),
         )
         BasicText(
             text = value,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
+            style =
+                TextStyle(
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
     }
 }
@@ -447,17 +548,16 @@ private fun ComponentPanel(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .background(
-                color = Color(0xF7FFFFFF),
-                shape = RoundedCornerShape(28.dp),
-            )
-            .border(
-                width = 1.dp,
-                color = Color(0x1F000000),
-                shape = RoundedCornerShape(28.dp),
-            )
-            .padding(horizontal = 18.dp, vertical = 8.dp),
+        modifier =
+            modifier
+                .background(
+                    color = Color(0xF7FFFFFF),
+                    shape = RoundedCornerShape(28.dp),
+                ).border(
+                    width = 1.dp,
+                    color = Color(0x1F000000),
+                    shape = RoundedCornerShape(28.dp),
+                ).padding(horizontal = 18.dp, vertical = 8.dp),
         content = content,
     )
 }
@@ -468,28 +568,62 @@ private fun StatusRow(
     value: String,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         BasicText(
             text = label,
             modifier = Modifier.weight(1f),
-            style = TextStyle(
-                color = Color(0xFF505050),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF505050),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
         )
         BasicText(
             text = value,
-            style = TextStyle(
-                color = Color(0xFF070707),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF070707),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+        )
+    }
+}
+
+@Composable
+private fun ShowcaseGalleryRow(
+    entry: ShowcaseEntry,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(vertical = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LabelBlock(
+            label = entry.title,
+            description = entry.summary,
+            modifier = Modifier.weight(1f),
+        )
+        BasicText(
+            text = "Open",
+            style =
+                TextStyle(
+                    color = Color(0xFF1B6BF2),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
     }
 }
@@ -497,10 +631,11 @@ private fun StatusRow(
 @Composable
 private fun PanelDivider() {
     Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(Color(0x1F000000)),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color(0x1F000000)),
     )
 }
 
@@ -531,9 +666,10 @@ private fun LiquidKitToggleRow(
     onValueChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -558,9 +694,10 @@ private fun LiquidKitSliderRow(
     onValueChange: (Float) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Row(
@@ -575,11 +712,12 @@ private fun LiquidKitSliderRow(
             )
             BasicText(
                 text = "${(value * 100).toInt()}%",
-                style = TextStyle(
-                    color = Color(0xFF070707),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                style =
+                    TextStyle(
+                        color = Color(0xFF070707),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
             )
         }
         LiquidSlider(
@@ -599,9 +737,10 @@ private fun LiquidKitSegmentedRow(
     onSelected: (ControlDensity) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         LabelBlock(
@@ -629,27 +768,31 @@ private fun LabelBlock(
     ) {
         BasicText(
             text = label,
-            style = TextStyle(
-                color = Color(0xFF070707),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF070707),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
         BasicText(
             text = description,
-            style = TextStyle(
-                color = Color(0xFF555555),
-                fontSize = 13.sp,
-                lineHeight = 18.sp,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF555555),
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp,
+                ),
         )
     }
 }
 
-private fun sampleBackground(): Brush = Brush.linearGradient(
-    colors = listOf(
-        Color(0xFFF7F7F7),
-        Color(0xFFEDEDED),
-        Color(0xFFDADADA),
-    ),
-)
+private fun sampleBackground(): Brush =
+    Brush.linearGradient(
+        colors =
+            listOf(
+                Color(0xFFF7F7F7),
+                Color(0xFFEDEDED),
+                Color(0xFFDADADA),
+            ),
+    )

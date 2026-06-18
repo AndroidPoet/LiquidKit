@@ -18,7 +18,9 @@ import io.github.androidpoet.liquidkit.internal.captureToLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.rememberLiquidLayerBackdrop
 
 @Stable
-public class LiquidTabState<T : Any> internal constructor(initialKey: T) {
+public class LiquidTabState<T : Any> internal constructor(
+    initialKey: T,
+) {
     public var selectedKey: T by mutableStateOf(initialKey)
         private set
 
@@ -30,9 +32,10 @@ public class LiquidTabState<T : Any> internal constructor(initialKey: T) {
 @Composable
 public fun <T : Any> rememberLiquidTabState(
     initialKey: T,
-): LiquidTabState<T> = remember(initialKey) {
-    LiquidTabState(initialKey)
-}
+): LiquidTabState<T> =
+    remember(initialKey) {
+        LiquidTabState(initialKey)
+    }
 
 @Composable
 public fun <T : Any> LiquidTabScaffold(

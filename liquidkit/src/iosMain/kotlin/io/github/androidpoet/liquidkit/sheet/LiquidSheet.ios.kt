@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package io.github.androidpoet.liquidkit.sheet
 
 import androidx.compose.foundation.background
@@ -20,16 +22,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
+import platform.Foundation.NSProcessInfo
 import platform.UIKit.UIBlurEffect
 import platform.UIKit.UIBlurEffectStyle
+import platform.UIKit.UIGlassEffect
+import platform.UIKit.UIGlassEffectStyle
 import platform.UIKit.UIVisualEffect
 import platform.UIKit.UIVisualEffectView
 
 /**
  * iOS [LiquidSheet] rendered as a native glass-backed surface using
- * [UIVisualEffectView] with a system [UIBlurEffect] (`systemMaterial`). On iOS 26
- * that material already renders as Liquid Glass; the dedicated `UIGlassEffect`
- * (not yet in the Kotlin/Native UIKit bindings) is best applied by the SwiftUI host.
+ * [UIVisualEffectView]. On iOS 26 it uses the dedicated `UIGlassEffect` (the same
+ * typed binding used by `LiquidSurface`); on earlier systems it falls back to a
+ * system [UIBlurEffect] (`systemMaterial`).
  *
  * NOTE: native sheet *presentation* (`UISheetPresentationController` detents,
  * grabber, interactive dismiss) is owned by the SwiftUI host. This component is
@@ -50,19 +57,21 @@ internal actual fun PlatformLiquidSheet(
     val scrimInteraction = remember { MutableInteractionSource() }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.32f))
-            .clickable(
-                interactionSource = scrimInteraction,
-                indication = null,
-            ) { currentOnDismiss.value() },
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.32f))
+                .clickable(
+                    interactionSource = scrimInteraction,
+                    indication = null,
+                ) { currentOnDismiss.value() },
         contentAlignment = Alignment.BottomCenter,
     ) {
         Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .widthIn(max = 640.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 640.dp),
             contentAlignment = Alignment.TopCenter,
         ) {
             // Native glass background behind the Compose content.
@@ -78,19 +87,21 @@ internal actual fun PlatformLiquidSheet(
                     view.layer.cornerRadius = style.cornerRadius.value.toDouble()
                 },
                 onRelease = {},
-                properties = UIKitInteropProperties(
-                    interactionMode = null,
-                    isNativeAccessibilityEnabled = false,
-                    placedAsOverlay = false,
-                ),
+                properties =
+                    UIKitInteropProperties(
+                        interactionMode = null,
+                        isNativeAccessibilityEnabled = false,
+                        placedAsOverlay = false,
+                    ),
             )
 
             // Compose content on top of the glass.
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(20.dp),
             ) {
                 content()
             }
@@ -99,12 +110,18 @@ internal actual fun PlatformLiquidSheet(
 }
 
 /**
- * Returns the system glass material for the sheet surface.
+ * Returns the glass material for the sheet surface.
  *
- * iOS 26's `UIGlassEffect` is not yet exposed in the Kotlin/Native UIKit bindings,
- * so this uses a system [UIBlurEffect] (`systemMaterial`) which on iOS 26 already
- * renders as the Liquid Glass material; the true `UIGlassEffect` is best applied by
- * the SwiftUI host that owns native presentation. See the iOS API gap note.
+ * On iOS 26 this uses the dedicated `UIGlassEffect` (the same typed binding used by
+ * `LiquidSurface`); on earlier systems it falls back to a system [UIBlurEffect]
+ * (`systemMaterial`), which renders as the closest available material.
  */
-private fun liquidGlassEffect(): UIVisualEffect =
-    UIBlurEffect.effectWithStyle(UIBlurEffectStyle.UIBlurEffectStyleSystemMaterial)
+private fun liquidGlassEffect(): UIVisualEffect {
+    if (isiOS26OrLater()) {
+        return UIGlassEffect.effectWithStyle(UIGlassEffectStyle.UIGlassEffectStyleRegular)
+    }
+    return UIBlurEffect.effectWithStyle(UIBlurEffectStyle.UIBlurEffectStyleSystemMaterial)
+}
+
+private fun isiOS26OrLater(): Boolean =
+    NSProcessInfo.processInfo.operatingSystemVersion.useContents { majorVersion >= 26L }

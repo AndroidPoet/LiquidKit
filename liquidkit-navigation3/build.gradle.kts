@@ -8,10 +8,28 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlinx.serialization)
-    id("maven-publish")
+    alias(libs.plugins.vanniktech.publish)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
 }
 
-apply(from = "$rootDir/scripts/publish-module.gradle.kts")
+mavenPublishing {
+    coordinates(
+        groupId = LiquidKitConfiguration.artifactGroup,
+        artifactId = LiquidKitConfiguration.navigation3ArtifactId,
+        version = LiquidKitConfiguration.versionName,
+    )
+    // Sonatype host (CENTRAL_PORTAL) is configured via the SONATYPE_HOST gradle property.
+    pom {
+        name.set("LiquidKit Navigation 3")
+        description.set("Optional Navigation 3 tab-stack helpers for LiquidKit.")
+    }
+    if (project.findProperty("RELEASE_SIGNING_ENABLED")?.toString()?.toBoolean() == true &&
+        project.findProperty("signingInMemoryKey") != null
+    ) {
+        signAllPublications()
+    }
+}
 
 kotlin {
     androidTarget {

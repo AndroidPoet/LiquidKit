@@ -1,0 +1,42 @@
+---
+title: Buttons & FAB
+description: LiquidButton and LiquidFab — Liquid Glass buttons that render as native UIButton glass on iOS.
+---
+
+# Buttons & FAB
+
+`LiquidButton` is a Liquid Glass button with style variants via `LiquidButtonVariant`, and
+`LiquidFab` is the floating action button.
+
+```kotlin
+import io.github.androidpoet.liquidkit.button.LiquidButton
+import io.github.androidpoet.liquidkit.button.LiquidButtonVariant
+import io.github.androidpoet.liquidkit.button.LiquidFab
+
+@Composable
+fun Buttons() {
+    LiquidButton(
+        onClick = { /* … */ },
+        variant = LiquidButtonVariant.Filled,
+    ) {
+        Text("Primary")
+    }
+
+    LiquidButton(
+        onClick = { /* … */ },
+        variant = LiquidButtonVariant.Tinted,
+    ) {
+        Text("Secondary")
+    }
+
+    LiquidFab(onClick = { /* … */ }) {
+        LiquidIcon(/* + icon */)
+    }
+}
+```
+
+## Android vs iOS
+
+- **Android** — the button is drawn by the internal Liquid Glass shader engine.
+- **iOS** — wraps a native `UIButton` with its glass configuration, so it picks up the system
+  Liquid Glass material on iOS 26.

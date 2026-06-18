@@ -155,7 +155,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\ngradle :sampleApp:linkDebugFrameworkIosArm64 :sampleApp:linkDebugFrameworkIosSimulatorArm64\nrm -rf sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework\nmkdir -p sampleApp/build/XCFrameworks/debug\nxcodebuild -create-xcframework \\\n  -framework sampleApp/build/bin/iosArm64/debugFramework/LiquidKitSample.framework \\\n  -framework sampleApp/build/bin/iosSimulatorArm64/debugFramework/LiquidKitSample.framework \\\n  -output sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework\n";
+			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :sampleApp:linkDebugFrameworkIosArm64 :sampleApp:linkDebugFrameworkIosSimulatorArm64\nrm -rf sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework\nmkdir -p sampleApp/build/XCFrameworks/debug\nxcodebuild -create-xcframework \\\n  -framework sampleApp/build/bin/iosArm64/debugFramework/LiquidKitSample.framework \\\n  -framework sampleApp/build/bin/iosSimulatorArm64/debugFramework/LiquidKitSample.framework \\\n  -output sampleApp/build/XCFrameworks/debug/LiquidKitSample.xcframework\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -20,9 +20,9 @@ import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.LayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCanvasBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberLayerBackdrop
-import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.lens
@@ -52,62 +52,64 @@ internal actual fun PlatformLiquidSurface(
     val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else canvasBackdrop
 
     val animationScope = rememberCoroutineScope()
-    val interactiveHighlight = remember(animationScope) {
-        InteractiveHighlight(animationScope = animationScope)
-    }
+    val interactiveHighlight =
+        remember(animationScope) {
+            InteractiveHighlight(animationScope = animationScope)
+        }
 
     Box(
-        modifier = modifier
-            .drawBackdrop(
-                backdrop = backdrop,
-                shape = { shape },
-                effects = {
-                    vibrancy()
-                    blur(4f.dp.toPx())
-                    lens(cornerRadius.toPx().coerceAtMost(20f.dp.toPx()), 24f.dp.toPx())
-                },
-                highlight = { Highlight.Default },
-                shadow = { Shadow(alpha = 0.18f) },
-                innerShadow = { InnerShadow(radius = 6f.dp, alpha = 0.08f) },
-                layerBlock = if (interactive) {
-                    {
-                        val width = size.width
-                        val height = size.height
-                        val progress = interactiveHighlight.pressProgress
-                        val scale = lerp(1f, 1f + 4f.dp.toPx() / size.height, progress)
-                        val maxOffset = size.minDimension
-                        val initialDerivative = 0.05f
-                        val offset = interactiveHighlight.offset
-                        translationX = maxOffset * tanh(initialDerivative * offset.x / maxOffset)
-                        translationY = maxOffset * tanh(initialDerivative * offset.y / maxOffset)
-                        val maxDragScale = 4f.dp.toPx() / size.height
-                        val offsetAngle = atan2(offset.y, offset.x)
-                        scaleX = scale + maxDragScale *
-                            abs(cos(offsetAngle) * offset.x / size.maxDimension)
-                        scaleY = scale + maxDragScale *
-                            abs(sin(offsetAngle) * offset.y / size.maxDimension)
-                    }
-                } else {
-                    null
-                },
-                onDrawSurface = {
-                    if (tint.isSpecified) {
-                        drawRect(tint, blendMode = BlendMode.Hue)
-                        drawRect(tint.copy(alpha = 0.55f))
+        modifier =
+            modifier
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { shape },
+                    effects = {
+                        vibrancy()
+                        blur(4f.dp.toPx())
+                        lens(cornerRadius.toPx().coerceAtMost(20f.dp.toPx()), 24f.dp.toPx())
+                    },
+                    highlight = { Highlight.Default },
+                    shadow = { Shadow(alpha = 0.18f) },
+                    innerShadow = { InnerShadow(radius = 6f.dp, alpha = 0.08f) },
+                    layerBlock =
+                        if (interactive) {
+                            {
+                                val width = size.width
+                                val height = size.height
+                                val progress = interactiveHighlight.pressProgress
+                                val scale = lerp(1f, 1f + 4f.dp.toPx() / size.height, progress)
+                                val maxOffset = size.minDimension
+                                val initialDerivative = 0.05f
+                                val offset = interactiveHighlight.offset
+                                translationX = maxOffset * tanh(initialDerivative * offset.x / maxOffset)
+                                translationY = maxOffset * tanh(initialDerivative * offset.y / maxOffset)
+                                val maxDragScale = 4f.dp.toPx() / size.height
+                                val offsetAngle = atan2(offset.y, offset.x)
+                                scaleX = scale + maxDragScale *
+                                    abs(cos(offsetAngle) * offset.x / size.maxDimension)
+                                scaleY = scale + maxDragScale *
+                                    abs(sin(offsetAngle) * offset.y / size.maxDimension)
+                            }
+                        } else {
+                            null
+                        },
+                    onDrawSurface = {
+                        if (tint.isSpecified) {
+                            drawRect(tint, blendMode = BlendMode.Hue)
+                            drawRect(tint.copy(alpha = 0.55f))
+                        } else {
+                            drawRect(style.containerColor)
+                        }
+                    },
+                ).then(
+                    if (interactive) {
+                        Modifier
+                            .then(interactiveHighlight.modifier)
+                            .then(interactiveHighlight.gestureModifier)
                     } else {
-                        drawRect(style.containerColor)
-                    }
-                },
-            )
-            .then(
-                if (interactive) {
-                    Modifier
-                        .then(interactiveHighlight.modifier)
-                        .then(interactiveHighlight.gestureModifier)
-                } else {
-                    Modifier
-                },
-            ),
+                        Modifier
+                    },
+                ),
         content = content,
     )
 }

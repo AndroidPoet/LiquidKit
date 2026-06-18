@@ -9,6 +9,12 @@ jetbrainsAnnotations = "26.0.2"
 kyantShapes = "1.2.0"
 kotlinxCoroutines = "1.10.2"
 navigation3 = "1.1.1"
+vanniktechPublish = "0.30.0"
+spotless = "8.6.0"
+ktlint = "1.5.0"
+detekt = "1.23.7"
+kover = "0.8.3"
+dokka = "1.9.20"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -17,6 +23,11 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechPublish" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }

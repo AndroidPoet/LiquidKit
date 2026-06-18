@@ -69,15 +69,16 @@ public fun <T : Any> LiquidMenu(
     selectedKey: T? = null,
     enabled: Boolean = true,
     style: LiquidGlassStyle = LocalLiquidGlassStyle.current,
-): Unit = LiquidDropdownMenu(
-    items = items,
-    onSelect = onSelect,
-    modifier = modifier,
-    label = label,
-    selectedKey = selectedKey,
-    enabled = enabled,
-    style = style,
-)
+): Unit =
+    LiquidDropdownMenu(
+        items = items,
+        onSelect = onSelect,
+        modifier = modifier,
+        label = label,
+        selectedKey = selectedKey,
+        enabled = enabled,
+        style = style,
+    )
 
 @Composable
 internal expect fun <T : Any> PlatformLiquidDropdownMenu(

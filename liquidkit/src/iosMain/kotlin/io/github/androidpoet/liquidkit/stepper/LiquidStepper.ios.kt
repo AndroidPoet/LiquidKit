@@ -43,9 +43,10 @@ internal actual fun PlatformLiquidStepper(
     style: LiquidGlassStyle,
 ) {
     val currentOnValueChange = rememberUpdatedState(onValueChange)
-    val target = remember {
-        LiquidStepperTarget { currentOnValueChange.value(it) }
-    }
+    val target =
+        remember {
+            LiquidStepperTarget { currentOnValueChange.value(it) }
+        }
     target.onValueChange = { currentOnValueChange.value(it) }
 
     UIKitView(
@@ -77,10 +78,11 @@ internal actual fun PlatformLiquidStepper(
             stepper.tintColor = style.selectedContentColor.toUIColor()
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

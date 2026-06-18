@@ -82,11 +82,12 @@ private fun StepperGlyph(text: String, color: androidx.compose.ui.graphics.Color
     ) {
         BasicText(
             text = text,
-            style = TextStyle(
-                color = color,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Medium,
-            ),
+            style =
+                TextStyle(
+                    color = color,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
         )
     }
 }

@@ -7,10 +7,24 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
-    id("maven-publish")
+    alias(libs.plugins.vanniktech.publish)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
 }
 
-apply(from = "$rootDir/scripts/publish-module.gradle.kts")
+mavenPublishing {
+    coordinates(
+        groupId = LiquidKitConfiguration.artifactGroup,
+        artifactId = LiquidKitConfiguration.coreArtifactId,
+        version = LiquidKitConfiguration.versionName,
+    )
+    // Sonatype host (CENTRAL_PORTAL) is configured via the SONATYPE_HOST gradle property.
+    if (project.findProperty("RELEASE_SIGNING_ENABLED")?.toString()?.toBoolean() == true &&
+        project.findProperty("signingInMemoryKey") != null
+    ) {
+        signAllPublications()
+    }
+}
 
 kotlin {
     compilerOptions {

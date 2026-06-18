@@ -28,14 +28,18 @@ import io.github.androidpoet.liquidkit.dropdown.LiquidMenuItem
 import io.github.androidpoet.liquidkit.picker.LiquidPicker
 import io.github.androidpoet.liquidkit.picker.LiquidPickerOption
 
-private enum class SortOrder(val label: String) {
+private enum class SortOrder(
+    val label: String,
+) {
     Newest("Newest"),
     Oldest("Oldest"),
     Name("Name (A-Z)"),
     Size("Size"),
 }
 
-private enum class TimeZone(val label: String) {
+private enum class TimeZone(
+    val label: String,
+) {
     Pacific("Pacific Time"),
     Mountain("Mountain Time"),
     Central("Central Time"),
@@ -53,20 +57,23 @@ public fun MenuShowcase(modifier: Modifier = Modifier) {
     var sort by remember { mutableStateOf(SortOrder.Newest) }
     var zone by remember { mutableStateOf(TimeZone.Pacific) }
 
-    val sortItems = remember {
-        SortOrder.entries.map { LiquidMenuItem(key = it, label = it.label) }
-    }
-    val zoneOptions = remember {
-        TimeZone.entries.map { LiquidPickerOption(key = it, label = it.label) }
-    }
+    val sortItems =
+        remember {
+            SortOrder.entries.map { LiquidMenuItem(key = it, label = it.label) }
+        }
+    val zoneOptions =
+        remember {
+            TimeZone.entries.map { LiquidPickerOption(key = it, label = it.label) }
+        }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(showcaseBackground())
-            .safeDrawingPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 28.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(showcaseBackground())
+                .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
@@ -104,11 +111,12 @@ private fun ShowcaseTitle(title: String, subtitle: String) {
     ) {
         BasicText(
             text = title,
-            style = TextStyle(
-                color = Color(0xFF070707),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF070707),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
         )
         BasicText(
             text = subtitle,
@@ -129,11 +137,12 @@ private fun ShowcaseSection(
     ) {
         BasicText(
             text = title,
-            style = TextStyle(
-                color = Color(0xFF070707),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF070707),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
         content()
         BasicText(
@@ -143,10 +152,12 @@ private fun ShowcaseSection(
     }
 }
 
-private fun showcaseBackground(): Brush = Brush.linearGradient(
-    colors = listOf(
-        Color(0xFFF7F7F7),
-        Color(0xFFEDEDED),
-        Color(0xFFDADADA),
-    ),
-)
+private fun showcaseBackground(): Brush =
+    Brush.linearGradient(
+        colors =
+            listOf(
+                Color(0xFFF7F7F7),
+                Color(0xFFEDEDED),
+                Color(0xFFDADADA),
+            ),
+    )

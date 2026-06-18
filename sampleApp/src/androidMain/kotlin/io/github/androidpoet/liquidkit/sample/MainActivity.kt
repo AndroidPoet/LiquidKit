@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -69,8 +68,8 @@ private fun GlassCatalogApp() {
     BackHandler(screen != Screen.Home) { screen = Screen.Home }
 
     when (screen) {
-        Screen.Home     -> HomeScreen(onNavigate = { screen = it })
-        Screen.Buttons  -> ButtonsScreen()
+        Screen.Home -> HomeScreen(onNavigate = { screen = it })
+        Screen.Buttons -> ButtonsScreen()
         Screen.Controls -> ControlsScreen()
         Screen.BottomTabs -> BottomTabsScreen()
     }
@@ -81,7 +80,7 @@ private fun GlassCatalogApp() {
 @Composable
 private fun DemoScaffold(
     wallpaper: Int = R.drawable.wallpaper_light,
-    content: @Composable BoxScope.(backdrop: LayerBackdrop) -> Unit
+    content: @Composable BoxScope.(backdrop: LayerBackdrop) -> Unit,
 ) {
     val backdrop = rememberLayerBackdrop()
 
@@ -89,9 +88,10 @@ private fun DemoScaffold(
         Image(
             painter = painterResource(wallpaper),
             contentDescription = null,
-            modifier = Modifier
-                .layerBackdrop(backdrop)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .layerBackdrop(backdrop)
+                    .fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
         content(backdrop)
@@ -125,7 +125,7 @@ private fun HomeScreen(onNavigate: (Screen) -> Unit) {
                 style = TextStyle(fg.copy(0.5f), 14.sp),
             )
 
-            SectionHeader("Components", fg)
+            SectionHeader("Components")
             NavRow("Buttons", fg) { onNavigate(Screen.Buttons) }
             NavRow("Toggle & Slider", fg) { onNavigate(Screen.Controls) }
             NavRow("Bottom tabs", fg) { onNavigate(Screen.BottomTabs) }
@@ -134,7 +134,7 @@ private fun HomeScreen(onNavigate: (Screen) -> Unit) {
 }
 
 @Composable
-private fun SectionHeader(label: String, fg: Color) {
+private fun SectionHeader(label: String) {
     BasicText(
         label,
         Modifier.padding(16.dp, 20.dp, 16.dp, 6.dp).fillMaxWidth(),
@@ -155,14 +155,20 @@ private fun NavRow(label: String, fg: Color, onClick: () -> Unit) {
         BasicText(label, style = TextStyle(fg, 17.sp))
         BasicText("›", style = TextStyle(fg.copy(0.4f), 20.sp))
     }
-    Box(Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(0.5.dp).background(fg.copy(0.08f)))
+    Box(
+        Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(0.5.dp)
+            .background(fg.copy(0.08f)),
+    )
 }
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 
 @Composable
 private fun ButtonsScreen() {
-    DemoScaffold {  backdrop ->
+    DemoScaffold { backdrop ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -210,7 +216,14 @@ private fun ControlsScreen() {
 
                 // Toggle over card (canvas backdrop)
                 var tog2 by rememberSaveable { mutableStateOf(true) }
-                Box(Modifier.background(cardBg, androidx.compose.foundation.shape.RoundedCornerShape(20.dp)).padding(20.dp)) {
+                Box(
+                    Modifier
+                        .background(
+                            cardBg,
+                            androidx.compose.foundation.shape
+                                .RoundedCornerShape(20.dp),
+                        ).padding(20.dp),
+                ) {
                     LiquidToggle({ tog2 }, { tog2 = it }, rememberCanvasBackdrop { drawRect(cardBg) })
                 }
             }

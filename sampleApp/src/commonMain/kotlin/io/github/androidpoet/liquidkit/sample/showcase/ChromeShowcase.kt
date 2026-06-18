@@ -42,30 +42,33 @@ public fun ChromeShowcase(modifier: Modifier = Modifier) {
     var sheetVisible by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFF6D83F2), Color(0xFFA66BF0), Color(0xFFF26D9C)),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF6D83F2), Color(0xFFA66BF0), Color(0xFFF26D9C)),
+                    ),
                 ),
-            ),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .safeDrawingPadding()
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             LiquidToolbar(
                 title = {
                     BasicText(
                         text = "Liquid Chrome",
-                        style = TextStyle(
-                            color = Color(0xFF101418),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                color = Color(0xFF101418),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                     )
                 },
                 leading = {
@@ -79,11 +82,12 @@ public fun ChromeShowcase(modifier: Modifier = Modifier) {
                     BasicText(
                         text = "Done",
                         modifier = Modifier.clickable { /* no-op */ },
-                        style = TextStyle(
-                            color = Color(0xFF0A84FF),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                color = Color(0xFF0A84FF),
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                     )
                 },
             )
@@ -92,20 +96,22 @@ public fun ChromeShowcase(modifier: Modifier = Modifier) {
 
             // "Open sheet" pill.
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White.copy(alpha = 0.38f), RoundedCornerShape(22.dp))
-                    .clickable { sheetVisible = true }
-                    .padding(vertical = 14.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.White.copy(alpha = 0.38f), RoundedCornerShape(22.dp))
+                        .clickable { sheetVisible = true }
+                        .padding(vertical = 14.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 BasicText(
                     text = "Open glass sheet",
-                    style = TextStyle(
-                        color = Color(0xFF101418),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    style =
+                        TextStyle(
+                            color = Color(0xFF101418),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
                 )
             }
         }
@@ -118,31 +124,34 @@ public fun ChromeShowcase(modifier: Modifier = Modifier) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 BasicText(
                     text = "Liquid Glass Sheet",
-                    style = TextStyle(
-                        color = Color(0xFF101418),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
+                    style =
+                        TextStyle(
+                            color = Color(0xFF101418),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
                 )
                 BasicText(
                     text = "A glass-backed bottom sheet. Tap the scrim to dismiss.",
                     style = TextStyle(color = Color(0xFF4E5968), fontSize = 14.sp),
                 )
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFF0A84FF), RoundedCornerShape(20.dp))
-                        .clickable { sheetVisible = false }
-                        .padding(vertical = 12.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFF0A84FF), RoundedCornerShape(20.dp))
+                            .clickable { sheetVisible = false }
+                            .padding(vertical = 12.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     BasicText(
                         text = "Dismiss",
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                     )
                 }
             }

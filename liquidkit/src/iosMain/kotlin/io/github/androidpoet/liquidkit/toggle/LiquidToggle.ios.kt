@@ -41,9 +41,10 @@ internal actual fun PlatformLiquidToggle(
     style: LiquidGlassStyle,
 ) {
     val currentOnCheckedChange = rememberUpdatedState(onCheckedChange)
-    val target = remember {
-        LiquidSwitchTarget { currentOnCheckedChange.value(it) }
-    }
+    val target =
+        remember {
+            LiquidSwitchTarget { currentOnCheckedChange.value(it) }
+        }
 
     UIKitView(
         factory = {
@@ -69,10 +70,11 @@ internal actual fun PlatformLiquidToggle(
             uiSwitch.onTintColor = style.selectedContentColor.toUIColor()
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

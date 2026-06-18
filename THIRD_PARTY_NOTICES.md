@@ -6,7 +6,7 @@ LiquidKit vendors Android Liquid Glass renderer and component source from:
 
 https://github.com/Kyant0/AndroidLiquidGlass
 
-Original author: Kyant  
+Original author: Kyant
 License: Apache License 2.0
 
 The copied files live under:

@@ -1,0 +1,74 @@
+---
+title: Getting Started
+description: Add LiquidKit to your Compose Multiplatform project from Maven Central and consume it on Android and iOS.
+---
+
+import { Steps, Callout } from 'nextra/components'
+
+# Getting Started
+
+LiquidKit is published to **Maven Central** under the coordinates
+`io.github.androidpoet:liquidkit`, with optional Navigation 3 tab helpers in
+`io.github.androidpoet:liquidkit-navigation3`.
+
+<Steps>
+
+### Add the dependency
+
+In your Compose Multiplatform module, add LiquidKit to `commonMain`:
+
+```kotlin
+commonMain.dependencies {
+    implementation("io.github.androidpoet:liquidkit:<version>")
+    // optional Navigation 3 tab helpers:
+    implementation("io.github.androidpoet:liquidkit-navigation3:<version>")
+}
+```
+
+### Or use a version catalog
+
+In `gradle/libs.versions.toml`:
+
+```toml
+[versions]
+liquidkit = "<version>"
+
+[libraries]
+liquidkit = { module = "io.github.androidpoet:liquidkit", version.ref = "liquidkit" }
+liquidkit-navigation3 = { module = "io.github.androidpoet:liquidkit-navigation3", version.ref = "liquidkit" }
+```
+
+```kotlin
+commonMain.dependencies {
+    implementation(libs.liquidkit)
+    implementation(libs.liquidkit.navigation3)
+}
+```
+
+### Use a component
+
+```kotlin
+import io.github.androidpoet.liquidkit.button.LiquidButton
+
+@Composable
+fun Screen() {
+    LiquidButton(onClick = { /* … */ }) {
+        Text("Get started")
+    }
+}
+```
+
+### Consume the iOS framework
+
+On iOS, the KMP build produces a static framework named **`LiquidKit`** (and
+**`LiquidKitNavigation3`** for the navigation helpers). Consume it the same way you embed
+any Kotlin/Native framework — the bundled `iosApp` links the framework produced by the
+multiplatform build, and the components render through their native UIKit counterparts.
+
+</Steps>
+
+<Callout type="info">
+On **iOS 26** LiquidKit components render with the authentic `UIGlassEffect` Liquid Glass
+material. On earlier iOS versions they fall back to a `UIBlurEffect` `systemMaterial`, so the
+same code keeps working and simply renders the closest available material.
+</Callout>

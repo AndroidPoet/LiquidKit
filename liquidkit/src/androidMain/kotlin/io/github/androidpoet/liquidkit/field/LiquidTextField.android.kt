@@ -3,7 +3,6 @@
 package io.github.androidpoet.liquidkit.field
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -49,8 +48,6 @@ internal actual fun PlatformLiquidTextField(
     enabled: Boolean,
     style: LiquidGlassStyle,
 ) {
-    val isLight = !isSystemInDarkTheme()
-
     val layerCapture = LocalLiquidLayerBackdrop.current
     val canvasBackdrop = rememberCanvasBackdrop { drawRect(style.containerColor) }
     val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else canvasBackdrop
@@ -58,22 +55,22 @@ internal actual fun PlatformLiquidTextField(
     val fieldShape = RoundedCornerShape(style.cornerRadius)
 
     Row(
-        modifier = modifier
-            .alpha(if (enabled) 1f else 0.42f)
-            .fillMaxWidth()
-            .drawBackdrop(
-                backdrop = backdrop,
-                shape = { fieldShape },
-                effects = {
-                    vibrancy()
-                    blur(8f.dp.toPx())
-                    lens(8f.dp.toPx(), 16f.dp.toPx())
-                },
-                highlight = { Highlight.Default },
-                onDrawSurface = { drawRect(style.containerColor) },
-            )
-            .heightIn(min = 52.dp)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .alpha(if (enabled) 1f else 0.42f)
+                .fillMaxWidth()
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { fieldShape },
+                    effects = {
+                        vibrancy()
+                        blur(8f.dp.toPx())
+                        lens(8f.dp.toPx(), 16f.dp.toPx())
+                    },
+                    highlight = { Highlight.Default },
+                    onDrawSurface = { drawRect(style.containerColor) },
+                ).heightIn(min = 52.dp)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {

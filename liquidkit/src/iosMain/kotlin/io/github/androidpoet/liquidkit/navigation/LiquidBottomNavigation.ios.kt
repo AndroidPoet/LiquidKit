@@ -25,7 +25,8 @@ import platform.darwin.NSObject
 
 private class LiquidTabBarDelegate(
     private val onItemSelected: (Int) -> Unit,
-) : NSObject(), UITabBarDelegateProtocol {
+) : NSObject(),
+    UITabBarDelegateProtocol {
     override fun tabBar(tabBar: UITabBar, didSelectItem: UITabBarItem) {
         onItemSelected(didSelectItem.tag.toInt())
     }
@@ -41,11 +42,12 @@ internal actual fun <T : Any> PlatformLiquidBottomNavigation(
     style: LiquidGlassStyle,
 ) {
     val currentOnSelected = rememberUpdatedState(onSelected)
-    val delegate = remember {
-        LiquidTabBarDelegate { index ->
-            items.getOrNull(index)?.key?.let(currentOnSelected.value)
+    val delegate =
+        remember {
+            LiquidTabBarDelegate { index ->
+                items.getOrNull(index)?.key?.let(currentOnSelected.value)
+            }
         }
-    }
 
     UIKitView(
         factory = {
@@ -54,19 +56,21 @@ internal actual fun <T : Any> PlatformLiquidBottomNavigation(
                 configureLiquidTabBar(items, selectedKey, style)
             }
         },
-        modifier = modifier
-            .fillMaxWidth()
-            .height(83.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(83.dp),
         update = { tabBar ->
             tabBar.delegate = delegate
             tabBar.configureLiquidTabBar(items, selectedKey, style)
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }
 
@@ -75,22 +79,24 @@ private fun <T : Any> UITabBar.configureLiquidTabBar(
     selectedKey: T,
     style: LiquidGlassStyle,
 ) {
-    val tabItems = navigationItems.mapIndexed { index, item ->
-        val selected = item.key == selectedKey
-        val image = item.icon?.iosSystemNameFor(selected)?.let { UIImage.systemImageNamed(it) }
-        UITabBarItem(
-            title = item.label,
-            image = image,
-            selectedImage = image,
-        ).apply {
-            tag = index.toLong()
-            badgeValue = when (item.badge) {
-                null -> null
-                0 -> ""
-                else -> item.badge.coerceAtMost(99).toString()
+    val tabItems =
+        navigationItems.mapIndexed { index, item ->
+            val selected = item.key == selectedKey
+            val image = item.icon?.iosSystemNameFor(selected)?.let { UIImage.systemImageNamed(it) }
+            UITabBarItem(
+                title = item.label,
+                image = image,
+                selectedImage = image,
+            ).apply {
+                tag = index.toLong()
+                badgeValue =
+                    when (item.badge) {
+                        null -> null
+                        0 -> ""
+                        else -> item.badge.coerceAtMost(99).toString()
+                    }
             }
         }
-    }
 
     setItems(tabItems, animated = false)
     selectedItem = tabItems.getOrNull(navigationItems.indexOfFirst { it.key == selectedKey })

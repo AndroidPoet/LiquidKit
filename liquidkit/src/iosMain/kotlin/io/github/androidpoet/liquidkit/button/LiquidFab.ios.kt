@@ -53,9 +53,10 @@ internal actual fun PlatformLiquidFab(
     UIKitView(
         factory = {
             UIButton().apply {
-                configuration = glassButtonConfigurationFor(
-                    prominent = variant == LiquidButtonVariant.GlassProminent,
-                )
+                configuration =
+                    glassButtonConfigurationFor(
+                        prominent = variant == LiquidButtonVariant.GlassProminent,
+                    )
                 systemName?.let { name ->
                     setImage(UIImage.systemImageNamed(name), forState = UIControlStateNormal)
                 }
@@ -77,10 +78,11 @@ internal actual fun PlatformLiquidFab(
             button.enabled = enabled
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

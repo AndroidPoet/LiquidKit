@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -22,7 +23,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.text.BasicText
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.LiquidKitTheme
 import io.github.androidpoet.liquidkit.play.LiquidMediaControl
@@ -38,19 +38,19 @@ import io.github.androidpoet.liquidkit.stepper.LiquidStepper
 public fun StepperMediaShowcase() {
     LiquidKitTheme(style = LiquidGlassStyle.SurfaceDark) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFF1E2A78),
-                            Color(0xFF6A1B9A),
-                            Color(0xFFFF6F00),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color(0xFF1E2A78),
+                                Color(0xFF6A1B9A),
+                                Color(0xFFFF6F00),
+                            ),
                         ),
-                    ),
-                )
-                .safeDrawingPadding()
-                .padding(24.dp),
+                    ).safeDrawingPadding()
+                    .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             SectionLabel("Liquid Stepper")
@@ -93,11 +93,12 @@ public fun StepperMediaShowcase() {
 private fun SectionLabel(text: String) {
     BasicText(
         text = text,
-        style = TextStyle(
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-        ),
+        style =
+            TextStyle(
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
     )
 }
 
@@ -105,9 +106,10 @@ private fun SectionLabel(text: String) {
 private fun ValueLabel(text: String) {
     BasicText(
         text = text,
-        style = TextStyle(
-            color = Color.White.copy(alpha = 0.85f),
-            fontSize = 15.sp,
-        ),
+        style =
+            TextStyle(
+                color = Color.White.copy(alpha = 0.85f),
+                fontSize = 15.sp,
+            ),
     )
 }

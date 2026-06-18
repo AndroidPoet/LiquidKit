@@ -24,8 +24,9 @@ import platform.darwin.NSObject
 private class LiquidPickerCoordinator(
     var titles: List<String>,
     var onRowSelected: (Int) -> Unit,
-) : NSObject(), UIPickerViewDataSourceProtocol, UIPickerViewDelegateProtocol {
-
+) : NSObject(),
+    UIPickerViewDataSourceProtocol,
+    UIPickerViewDelegateProtocol {
     override fun numberOfComponentsInPickerView(pickerView: UIPickerView): NSInteger = 1L
 
     override fun pickerView(
@@ -67,17 +68,24 @@ internal actual fun <T : Any> PlatformLiquidPicker(
     val currentOnSelected = rememberUpdatedState(onSelected)
     val currentOptions = rememberUpdatedState(options)
 
-    val coordinator = remember {
-        LiquidPickerCoordinator(
-            titles = options.map { it.label },
-            onRowSelected = { index ->
-                currentOptions.value.getOrNull(index)?.key?.let(currentOnSelected.value)
-            },
-        )
-    }
+    val coordinator =
+        remember {
+            LiquidPickerCoordinator(
+                titles = options.map { it.label },
+                onRowSelected = { index ->
+                    currentOptions.value
+                        .getOrNull(index)
+                        ?.key
+                        ?.let(currentOnSelected.value)
+                },
+            )
+        }
     coordinator.titles = options.map { it.label }
     coordinator.onRowSelected = { index ->
-        currentOptions.value.getOrNull(index)?.key?.let(currentOnSelected.value)
+        currentOptions.value
+            .getOrNull(index)
+            ?.key
+            ?.let(currentOnSelected.value)
     }
 
     val selectedIndex = options.indexOfFirst { it.key == selectedKey }.coerceAtLeast(0)
@@ -101,10 +109,11 @@ internal actual fun <T : Any> PlatformLiquidPicker(
             }
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

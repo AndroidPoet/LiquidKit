@@ -3,7 +3,6 @@ package io.github.androidpoet.liquidkit.dropdown
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -21,8 +20,8 @@ import platform.UIKit.UIControlStateNormal
 import platform.UIKit.UIImage
 import platform.UIKit.UIMenu
 import platform.UIKit.UIMenuElement
-import platform.UIKit.UIMenuElementState
 import platform.UIKit.UIMenuElementAttributesDisabled
+import platform.UIKit.UIMenuElementState
 
 /**
  * Genuine native iOS dropdown: a [UIButton] with `showsMenuAsPrimaryAction = true`
@@ -58,18 +57,20 @@ internal actual fun <T : Any> PlatformLiquidDropdownMenu(
             button.enabled = enabled
             button.alpha = if (enabled) 1.0 else 0.42
             button.setOpaque(false)
-            button.menu = buildMenu(
-                items = currentItems.value,
-                selectedKey = currentSelected.value,
-                onSelect = { currentOnSelect.value(it) },
-            )
+            button.menu =
+                buildMenu(
+                    items = currentItems.value,
+                    selectedKey = currentSelected.value,
+                    onSelect = { currentOnSelect.value(it) },
+                )
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }
 
@@ -79,24 +80,29 @@ private fun <T : Any> buildMenu(
     selectedKey: T?,
     onSelect: (T) -> Unit,
 ): UIMenu {
-    val actions: List<UIMenuElement> = items.map { item ->
-        val image: UIImage? = item.icon?.iosSystemNameFor(selectedKey != null && item.key == selectedKey)
-            ?.let { UIImage.systemImageNamed(it) }
-        UIAction.actionWithTitle(
-            title = item.label,
-            image = image,
-            identifier = null,
-            handler = { onSelect(item.key) },
-        ).apply {
-            state = if (selectedKey != null && item.key == selectedKey) {
-                UIMenuElementState.UIMenuElementStateOn
-            } else {
-                UIMenuElementState.UIMenuElementStateOff
-            }
-            if (!item.enabled) {
-                attributes = UIMenuElementAttributesDisabled
-            }
+    val actions: List<UIMenuElement> =
+        items.map { item ->
+            val image: UIImage? =
+                item.icon
+                    ?.iosSystemNameFor(selectedKey != null && item.key == selectedKey)
+                    ?.let { UIImage.systemImageNamed(it) }
+            UIAction
+                .actionWithTitle(
+                    title = item.label,
+                    image = image,
+                    identifier = null,
+                    handler = { onSelect(item.key) },
+                ).apply {
+                    state =
+                        if (selectedKey != null && item.key == selectedKey) {
+                            UIMenuElementState.UIMenuElementStateOn
+                        } else {
+                            UIMenuElementState.UIMenuElementStateOff
+                        }
+                    if (!item.enabled) {
+                        attributes = UIMenuElementAttributesDisabled
+                    }
+                }
         }
-    }
     return UIMenu.menuWithChildren(actions)
 }

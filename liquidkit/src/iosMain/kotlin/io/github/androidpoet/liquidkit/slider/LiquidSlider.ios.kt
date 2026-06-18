@@ -42,9 +42,10 @@ internal actual fun PlatformLiquidSlider(
     style: LiquidGlassStyle,
 ) {
     val currentOnValueChange = rememberUpdatedState(onValueChange)
-    val target = remember {
-        LiquidSliderTarget { currentOnValueChange.value(it) }
-    }
+    val target =
+        remember {
+            LiquidSliderTarget { currentOnValueChange.value(it) }
+        }
     target.onValueChange = { currentOnValueChange.value(it) }
 
     UIKitView(
@@ -78,10 +79,11 @@ internal actual fun PlatformLiquidSlider(
             slider.thumbTintColor = UIColor.whiteColor
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

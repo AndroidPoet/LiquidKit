@@ -1,26 +1,74 @@
-# LiquidGlass
+# LiquidKit
 
-LiquidGlass is a Kotlin Multiplatform component kit for Liquid Glass-style UI.
+LiquidKit is a Kotlin Multiplatform component kit for Liquid Glass-style UI.
 
-Android renders with the vendored AndroidLiquidGlass engine. iOS renders with
-native UIKit controls through Compose interop.
+One shared Compose Multiplatform API; the rendering diverges per platform:
 
-> Maven/module coordinates still use `liquidkit` until a deliberate breaking
-> rename is made.
+- **Android** renders the glass look in-Compose via an internal backdrop-capture
+  and refraction (Liquid Glass) shader engine.
+- **iOS** wraps **genuine native UIKit controls** (`UISwitch`, `UIButton` glass
+  configuration, `UIMenu`, `UIPickerView`, `UITextField`, `UISearchTextField`,
+  `UIStepper`, `UINavigationBar`, `UIVisualEffectView`) so components get the
+  authentic system Liquid Glass on iOS 26, with a `UIBlurEffect` `systemMaterial`
+  fallback on earlier versions.
+
+See [Architecture](#architecture) for details.
+
+## Install
+
+LiquidKit is published to Maven Central as `io.github.androidpoet`.
 
 ```kotlin
-io.github.androidpoet.liquidkit
-io.github.androidpoet.liquidkit.navigation3 // optional
+// build.gradle.kts (Kotlin Multiplatform)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("io.github.androidpoet:liquidkit:0.1.0")
+            // Optional Navigation 3 tab-stack helpers:
+            implementation("io.github.androidpoet:liquidkit-navigation3:0.1.0")
+        }
+    }
+}
 ```
+
+With a version catalog (`gradle/libs.versions.toml`):
+
+```toml
+[libraries]
+liquidkit = { module = "io.github.androidpoet:liquidkit", version = "0.1.0" }
+liquidkit-navigation3 = { module = "io.github.androidpoet:liquidkit-navigation3", version = "0.1.0" }
+```
+
+On iOS the library builds a static Kotlin/Native framework named `LiquidKit`
+(and `LiquidKitNavigation3` for the optional module); consume it the same way as
+any Compose Multiplatform framework embedded by your iOS app.
 
 ## Components
 
-- `LiquidToggle`
-- `LiquidSlider`
-- `LiquidSegmentedControl`
-- `LiquidBottomNavigation`
-- `LiquidTabScaffold`
+LiquidKit ships an iOS-parity component set:
+
+- `LiquidButton` (variants via `LiquidButtonVariant`) and `LiquidFab`
+- `LiquidSurface` and `LiquidGlassContainer`
+- `LiquidDropdownMenu` (`LiquidMenuItem`) and `LiquidPicker` (`LiquidPickerOption`)
+- `LiquidTextField` and `LiquidSearchField`
+- `LiquidStepper` and `LiquidMediaControl`
+- `LiquidToolbar` and `LiquidSheet`
+- `LiquidToggle`, `LiquidSlider`, `LiquidSegmentedControl`
+- `LiquidBottomNavigation` and `LiquidTabScaffold`
 - `LiquidNav3TabScaffold` from the optional Navigation 3 module
+
+## Architecture
+
+LiquidKit is a single cross-platform Compose API backed by `expect`/`actual`
+platform implementations:
+
+- **Android shader** — components render their Liquid Glass appearance with an
+  internal backdrop capture + refraction shader engine, entirely in Compose.
+- **iOS native** — components wrap real UIKit controls through Compose interop,
+  so they inherit the system's authentic Liquid Glass on iOS 26 (and degrade
+  gracefully to a `UIBlurEffect` `systemMaterial` on earlier iOS).
+
+You write one API; each platform draws it the right way.
 
 ## Controls
 
@@ -62,7 +110,7 @@ LiquidBottomNavigation(
 )
 ```
 
-Use `LiquidTabScaffold` when LiquidGlass should hold the selected tab:
+Use `LiquidTabScaffold` when LiquidKit should hold the selected tab:
 
 ```kotlin
 LiquidTabScaffold(items = items) { selectedTab ->
@@ -88,7 +136,7 @@ LiquidTabScaffold(
 ## Navigation 3
 
 Use `liquidkit-navigation3` only for Compose-owned bottom-navigation tab stacks.
-LiquidGlass handles the multiple back stacks; your app still owns `NavDisplay`.
+LiquidKit handles the multiple back stacks; your app still owns `NavDisplay`.
 
 ```kotlin
 val state = rememberLiquidNav3State(
@@ -150,7 +198,7 @@ iosApp/LiquidKitSample.xcodeproj
 
 ## Credits
 
-LiquidGlass's Android renderer includes source from
+LiquidKit's Android renderer includes source from
 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass).
 
 The optional Navigation 3 helper is adapted from the multiple-back-stack pattern

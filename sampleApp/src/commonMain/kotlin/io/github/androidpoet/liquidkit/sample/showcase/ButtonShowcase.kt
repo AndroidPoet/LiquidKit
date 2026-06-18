@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,29 +27,30 @@ import io.github.androidpoet.liquidkit.button.LiquidFab
 import io.github.androidpoet.liquidkit.icon.LiquidIcon
 
 private val PlusIcon: ImageVector by lazy {
-    ImageVector.Builder(
-        name = "Plus",
-        defaultWidth = 24.dp,
-        defaultHeight = 24.dp,
-        viewportWidth = 24f,
-        viewportHeight = 24f,
-    ).apply {
-        path(fill = SolidColor(Color.White)) {
-            moveTo(11f, 5f)
-            horizontalLineTo(13f)
-            verticalLineTo(11f)
-            horizontalLineTo(19f)
-            verticalLineTo(13f)
-            horizontalLineTo(13f)
-            verticalLineTo(19f)
-            horizontalLineTo(11f)
-            verticalLineTo(13f)
-            horizontalLineTo(5f)
-            verticalLineTo(11f)
-            horizontalLineTo(11f)
-            close()
-        }
-    }.build()
+    ImageVector
+        .Builder(
+            name = "Plus",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            path(fill = SolidColor(Color.White)) {
+                moveTo(11f, 5f)
+                horizontalLineTo(13f)
+                verticalLineTo(11f)
+                horizontalLineTo(19f)
+                verticalLineTo(13f)
+                horizontalLineTo(13f)
+                verticalLineTo(19f)
+                horizontalLineTo(11f)
+                verticalLineTo(13f)
+                horizontalLineTo(5f)
+                verticalLineTo(11f)
+                horizontalLineTo(11f)
+                close()
+            }
+        }.build()
 }
 
 /**
@@ -61,27 +62,30 @@ private val PlusIcon: ImageVector by lazy {
 public fun ButtonShowcase() {
     var clicks by remember { mutableStateOf(0) }
 
-    val fabIcon = remember {
-        LiquidIcon(
-            imageVector = PlusIcon,
-            contentDescription = "Add",
-            iosSystemName = "plus",
-        )
-    }
+    val fabIcon =
+        remember {
+            LiquidIcon(
+                imageVector = PlusIcon,
+                contentDescription = "Add",
+                iosSystemName = "plus",
+            )
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         BasicText(
             text = "Liquid Glass Buttons",
-            style = TextStyle(
-                color = Color(0xFF101418),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-            ),
+            style =
+                TextStyle(
+                    color = Color(0xFF101418),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
         )
 
         BasicText(

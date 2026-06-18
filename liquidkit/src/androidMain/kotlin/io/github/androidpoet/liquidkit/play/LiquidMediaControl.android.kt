@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,11 +56,12 @@ internal actual fun PlatformLiquidMediaControl(
                 // ▶ / ❚❚ as text glyphs to avoid an icon dependency.
                 BasicText(
                     text = if (isPlaying) "❚❚" else "▶",
-                    style = TextStyle(
-                        color = style.selectedContentColor,
-                        fontSize = if (isPlaying) 16.sp else 20.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
+                    style =
+                        TextStyle(
+                            color = style.selectedContentColor,
+                            fontSize = if (isPlaying) 16.sp else 20.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
                 )
             }
         }

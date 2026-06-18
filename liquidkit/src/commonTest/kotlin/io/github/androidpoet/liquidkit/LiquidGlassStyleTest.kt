@@ -22,11 +22,12 @@ class LiquidGlassStyleTest {
 
     @Test
     fun test_liquidGlassStyle_overridesOnlyProvidedValues() {
-        val style = liquidGlassStyle(
-            base = LiquidGlassStyle.NavigationBar,
-            cornerRadius = 12.dp,
-            containerColor = Color.Red,
-        )
+        val style =
+            liquidGlassStyle(
+                base = LiquidGlassStyle.NavigationBar,
+                cornerRadius = 12.dp,
+                containerColor = Color.Red,
+            )
 
         assertEquals(12.dp, style.cornerRadius)
         assertEquals(Color.Red, style.containerColor)

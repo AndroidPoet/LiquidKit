@@ -3,7 +3,6 @@
 package io.github.androidpoet.liquidkit.field
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -56,30 +55,31 @@ internal actual fun PlatformLiquidSearchField(
     val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else canvasBackdrop
 
     Row(
-        modifier = modifier
-            .alpha(if (enabled) 1f else 0.42f)
-            .fillMaxWidth()
-            .drawBackdrop(
-                backdrop = backdrop,
-                shape = { Capsule() },
-                effects = {
-                    vibrancy()
-                    blur(8f.dp.toPx())
-                    lens(8f.dp.toPx(), 16f.dp.toPx())
-                },
-                highlight = { Highlight.Default },
-                onDrawSurface = { drawRect(style.containerColor) },
-            )
-            .height(44.dp)
-            .padding(horizontal = 14.dp),
+        modifier =
+            modifier
+                .alpha(if (enabled) 1f else 0.42f)
+                .fillMaxWidth()
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { Capsule() },
+                    effects = {
+                        vibrancy()
+                        blur(8f.dp.toPx())
+                        lens(8f.dp.toPx(), 16f.dp.toPx())
+                    },
+                    highlight = { Highlight.Default },
+                    onDrawSurface = { drawRect(style.containerColor) },
+                ).height(44.dp)
+                .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // Magnifier glyph drawn with Canvas so we need no icon dependency.
         Box(
-            modifier = Modifier
-                .size(16.dp)
-                .androidMagnifier(style.contentColor),
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .androidMagnifier(style.contentColor),
         )
 
         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
@@ -104,16 +104,16 @@ internal actual fun PlatformLiquidSearchField(
 
         if (query.isNotEmpty()) {
             Box(
-                modifier = Modifier
-                    .size(18.dp)
-                    .clickable(
-                        interactionSource = null,
-                        indication = null,
-                        enabled = enabled,
-                        role = Role.Button,
-                        onClick = { onQueryChange("") },
-                    )
-                    .androidClearGlyph(style.contentColor),
+                modifier =
+                    Modifier
+                        .size(18.dp)
+                        .clickable(
+                            interactionSource = null,
+                            indication = null,
+                            enabled = enabled,
+                            role = Role.Button,
+                            onClick = { onQueryChange("") },
+                        ).androidClearGlyph(style.contentColor),
             )
         }
     }

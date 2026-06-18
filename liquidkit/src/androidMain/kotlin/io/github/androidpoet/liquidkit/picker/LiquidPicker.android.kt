@@ -30,9 +30,9 @@ import io.github.androidpoet.liquidkit.LiquidGlassStyle
 import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.LayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCanvasBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCombinedBackdrop
-import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
@@ -78,20 +78,20 @@ internal actual fun <T : Any> PlatformLiquidPicker(
     ) {
         // Glass container that the center selection refracts over.
         LazyColumn(
-            modifier = Modifier
-                .layerBackdrop(trackLayer)
-                .drawBackdrop(
-                    backdrop = outerBackdrop,
-                    shape = { com.kyant.shapes.RoundedRectangle(20.dp) },
-                    effects = {
-                        vibrancy()
-                        blur(8f.dp.toPx())
-                        lens(8f.dp.toPx(), 16f.dp.toPx())
-                    },
-                    onDrawSurface = { drawRect(containerColor) },
-                )
-                .fillMaxWidth()
-                .height(WheelHeight),
+            modifier =
+                Modifier
+                    .layerBackdrop(trackLayer)
+                    .drawBackdrop(
+                        backdrop = outerBackdrop,
+                        shape = { com.kyant.shapes.RoundedRectangle(20.dp) },
+                        effects = {
+                            vibrancy()
+                            blur(8f.dp.toPx())
+                            lens(8f.dp.toPx(), 16f.dp.toPx())
+                        },
+                        onDrawSurface = { drawRect(containerColor) },
+                    ).fillMaxWidth()
+                    .height(WheelHeight),
             state = listState,
             contentPadding = PaddingValues(vertical = RowHeight * 2),
         ) {
@@ -114,12 +114,13 @@ internal actual fun <T : Any> PlatformLiquidPicker(
                         text = option.label,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
-                            color = if (isSelected) style.selectedContentColor else style.contentColor,
-                            fontSize = if (isSelected) 19.sp else 17.sp,
-                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            textAlign = TextAlign.Center,
-                        ),
+                        style =
+                            TextStyle(
+                                color = if (isSelected) style.selectedContentColor else style.contentColor,
+                                fontSize = if (isSelected) 19.sp else 17.sp,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                textAlign = TextAlign.Center,
+                            ),
                     )
                 }
             }
@@ -140,8 +141,7 @@ internal actual fun <T : Any> PlatformLiquidPicker(
                         val surfaceColor = if (isLight) Color.Black.copy(0.05f) else Color.White.copy(0.08f)
                         drawRect(surfaceColor)
                     },
-                )
-                .fillMaxWidth()
+                ).fillMaxWidth()
                 .height(RowHeight),
         )
     }

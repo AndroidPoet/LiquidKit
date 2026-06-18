@@ -1,0 +1,39 @@
+---
+title: Fields
+description: LiquidTextField and LiquidSearchField — text input backed by native UITextField and UISearchTextField on iOS.
+---
+
+# Fields
+
+`LiquidTextField` is a Liquid Glass text input, and `LiquidSearchField` is the search-styled
+variant.
+
+```kotlin
+import io.github.androidpoet.liquidkit.field.LiquidTextField
+import io.github.androidpoet.liquidkit.field.LiquidSearchField
+
+@Composable
+fun Fields() {
+    var name by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("") }
+
+    LiquidTextField(
+        value = name,
+        onValueChange = { name = it },
+        placeholder = "Full name",
+    )
+
+    LiquidSearchField(
+        value = query,
+        onValueChange = { query = it },
+        placeholder = "Search",
+        onSearch = { /* … */ },
+    )
+}
+```
+
+## Android vs iOS
+
+- **Android** — the field is drawn on a Liquid Glass surface by the shader engine.
+- **iOS** — wraps a native `UITextField` (and `UISearchTextField` for search), so editing,
+  keyboard handling and the system look are all native.

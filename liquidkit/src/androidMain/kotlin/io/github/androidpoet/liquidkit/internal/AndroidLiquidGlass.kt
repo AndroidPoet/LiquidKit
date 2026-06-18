@@ -24,47 +24,51 @@ import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.highlight.
 internal fun Modifier.androidLiquidGlass(
     shape: Shape,
     style: LiquidGlassStyle,
-): Modifier = composed {
-    // Use a layer backdrop from the composition local if a scaffold has set one up,
-    // otherwise fall back to an empty canvas backdrop (lens / highlight still apply).
-    val layerCapture = LocalLiquidLayerBackdrop.current
-    val emptyBackdrop = rememberCanvasBackdrop {}
-    val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else emptyBackdrop
+): Modifier =
+    composed {
+        // Use a layer backdrop from the composition local if a scaffold has set one up,
+        // otherwise fall back to an empty canvas backdrop (lens / highlight still apply).
+        val layerCapture = LocalLiquidLayerBackdrop.current
+        val emptyBackdrop = rememberCanvasBackdrop {}
+        val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else emptyBackdrop
 
-    drawBackdrop(
-        backdrop = backdrop,
-        shape = { shape },
-        effects = {
-            vibrancy()
-            blur(style.androidBlurRadius.toPx())
-            lens(style.androidRefractionHeight.toPx(), style.androidRefractionAmount.toPx())
-        },
-        highlight = { Highlight.Default },
-        onDrawSurface = { drawRect(style.containerColor) },
-    )
-}
+        drawBackdrop(
+            backdrop = backdrop,
+            shape = { shape },
+            effects = {
+                vibrancy()
+                blur(style.androidBlurRadius.toPx())
+                lens(style.androidRefractionHeight.toPx(), style.androidRefractionAmount.toPx())
+            },
+            highlight = { Highlight.Default },
+            onDrawSurface = { drawRect(style.containerColor) },
+        )
+    }
 
 private val LiquidGlassStyle.androidBlurRadius: Dp
-    get() = when (this) {
-        LiquidGlassStyle.Surface -> 16.dp
-        LiquidGlassStyle.NavigationBar -> 18.dp
-        LiquidGlassStyle.Control -> 14.dp
-        else -> (cornerRadius * 0.72f).coerceIn(8.dp, 22.dp)
-    }
+    get() =
+        when (this) {
+            LiquidGlassStyle.Surface -> 16.dp
+            LiquidGlassStyle.NavigationBar -> 18.dp
+            LiquidGlassStyle.Control -> 14.dp
+            else -> (cornerRadius * 0.72f).coerceIn(8.dp, 22.dp)
+        }
 
 private val LiquidGlassStyle.androidRefractionHeight: Dp
-    get() = when (this) {
-        LiquidGlassStyle.Surface -> 10.dp
-        LiquidGlassStyle.NavigationBar -> 14.dp
-        LiquidGlassStyle.Control -> 8.dp
-        else -> (cornerRadius * 0.48f).coerceIn(6.dp, 16.dp)
-    }
+    get() =
+        when (this) {
+            LiquidGlassStyle.Surface -> 10.dp
+            LiquidGlassStyle.NavigationBar -> 14.dp
+            LiquidGlassStyle.Control -> 8.dp
+            else -> (cornerRadius * 0.48f).coerceIn(6.dp, 16.dp)
+        }
 
 // Refraction amount is roughly 2× height for a pronounced glass-edge distortion.
 private val LiquidGlassStyle.androidRefractionAmount: Dp
-    get() = when (this) {
-        LiquidGlassStyle.Surface -> 20.dp
-        LiquidGlassStyle.NavigationBar -> 28.dp
-        LiquidGlassStyle.Control -> 16.dp
-        else -> (cornerRadius * 0.96f).coerceIn(12.dp, 32.dp)
-    }
+    get() =
+        when (this) {
+            LiquidGlassStyle.Surface -> 20.dp
+            LiquidGlassStyle.NavigationBar -> 28.dp
+            LiquidGlassStyle.Control -> 16.dp
+            else -> (cornerRadius * 0.96f).coerceIn(12.dp, 32.dp)
+        }

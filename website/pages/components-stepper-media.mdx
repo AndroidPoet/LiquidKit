@@ -1,0 +1,38 @@
+---
+title: Stepper & Media
+description: LiquidStepper and LiquidMediaControl — value steppers and transport controls with native UIStepper on iOS.
+---
+
+# Stepper & Media
+
+`LiquidStepper` increments and decrements a numeric value, and `LiquidMediaControl` provides glass
+transport controls for playback.
+
+```kotlin
+import io.github.androidpoet.liquidkit.stepper.LiquidStepper
+import io.github.androidpoet.liquidkit.play.LiquidMediaControl
+
+@Composable
+fun StepperAndMedia() {
+    var quantity by remember { mutableFloatStateOf(2f) }
+    LiquidStepper(
+        value = quantity,
+        onValueChange = { quantity = it },
+        range = 0f..10f,
+    )
+
+    var playing by remember { mutableStateOf(false) }
+    LiquidMediaControl(
+        isPlaying = playing,
+        onPlayPause = { playing = !playing },
+        onPrevious = { /* … */ },
+        onNext = { /* … */ },
+    )
+}
+```
+
+## Android vs iOS
+
+- **Android** — both render as Liquid Glass surfaces via the shader engine.
+- **iOS** — the stepper wraps a native `UIStepper`; the media control renders native transport
+  controls, picking up system Liquid Glass on iOS 26.

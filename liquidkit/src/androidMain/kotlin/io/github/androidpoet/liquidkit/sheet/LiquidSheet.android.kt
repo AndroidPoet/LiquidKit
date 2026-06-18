@@ -39,10 +39,11 @@ internal actual fun PlatformLiquidSheet(
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            dismissOnClickOutside = true,
-        ),
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnClickOutside = true,
+            ),
     ) {
         val layerCapture = LocalLiquidLayerBackdrop.current
         val canvasBackdrop = rememberCanvasBackdrop { drawRect(style.containerColor) }
@@ -52,33 +53,35 @@ internal actual fun PlatformLiquidSheet(
         // Bottom-aligned scrim that fills the dialog window. A tap on the scrim
         // dismisses; the sheet surface itself sits at the bottom edge.
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.32f)),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.32f)),
             contentAlignment = Alignment.BottomCenter,
         ) {
-            val sheetShape = RoundedCornerShape(
-                topStart = style.cornerRadius,
-                topEnd = style.cornerRadius,
-                bottomStart = 0.dp,
-                bottomEnd = 0.dp,
-            )
+            val sheetShape =
+                RoundedCornerShape(
+                    topStart = style.cornerRadius,
+                    topEnd = style.cornerRadius,
+                    bottomStart = 0.dp,
+                    bottomEnd = 0.dp,
+                )
             Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .widthIn(max = 640.dp)
-                    .drawBackdrop(
-                        backdrop = backdrop,
-                        shape = { sheetShape },
-                        effects = {
-                            vibrancy()
-                            blur(12f.dp.toPx())
-                            lens(24f.dp.toPx(), 24f.dp.toPx())
-                        },
-                        onDrawSurface = { drawRect(style.containerColor) },
-                    )
-                    .navigationBarsPadding()
-                    .padding(20.dp),
+                modifier =
+                    modifier
+                        .fillMaxWidth()
+                        .widthIn(max = 640.dp)
+                        .drawBackdrop(
+                            backdrop = backdrop,
+                            shape = { sheetShape },
+                            effects = {
+                                vibrancy()
+                                blur(12f.dp.toPx())
+                                lens(24f.dp.toPx(), 24f.dp.toPx())
+                            },
+                            onDrawSurface = { drawRect(style.containerColor) },
+                        ).navigationBarsPadding()
+                        .padding(20.dp),
             ) {
                 content()
             }

@@ -65,14 +65,16 @@ internal actual fun PlatformLiquidMediaControl(
     val currentOnToggle = rememberUpdatedState(onPlayPauseToggle)
     val currentIsPlaying = rememberUpdatedState(isPlaying)
 
-    val scrubberTarget = remember {
-        LiquidScrubberTarget { currentOnProgressChange.value(it) }
-    }
+    val scrubberTarget =
+        remember {
+            LiquidScrubberTarget { currentOnProgressChange.value(it) }
+        }
     scrubberTarget.onValueChange = { currentOnProgressChange.value(it) }
 
-    val playPauseTarget = remember {
-        LiquidPlayPauseTarget { currentOnToggle.value(!currentIsPlaying.value) }
-    }
+    val playPauseTarget =
+        remember {
+            LiquidPlayPauseTarget { currentOnToggle.value(!currentIsPlaying.value) }
+        }
     playPauseTarget.onToggle = { currentOnToggle.value(!currentIsPlaying.value) }
 
     Row(
@@ -104,11 +106,12 @@ internal actual fun PlatformLiquidMediaControl(
                 button.tintColor = style.selectedContentColor.toUIColor()
             },
             onRelease = {},
-            properties = UIKitInteropProperties(
-                interactionMode = UIKitInteropInteractionMode.Cooperative(),
-                isNativeAccessibilityEnabled = true,
-                placedAsOverlay = true,
-            ),
+            properties =
+                UIKitInteropProperties(
+                    interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                    isNativeAccessibilityEnabled = true,
+                    placedAsOverlay = true,
+                ),
         )
 
         // Genuine native scrubber.
@@ -145,11 +148,12 @@ internal actual fun PlatformLiquidMediaControl(
                 slider.thumbTintColor = UIColor.whiteColor
             },
             onRelease = {},
-            properties = UIKitInteropProperties(
-                interactionMode = UIKitInteropInteractionMode.Cooperative(),
-                isNativeAccessibilityEnabled = true,
-                placedAsOverlay = true,
-            ),
+            properties =
+                UIKitInteropProperties(
+                    interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                    isNativeAccessibilityEnabled = true,
+                    placedAsOverlay = true,
+                ),
         )
     }
 }

@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
@@ -41,9 +40,10 @@ internal actual fun PlatformLiquidToolbar(
     style: LiquidGlassStyle,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(56.dp),
     ) {
         // Native glass background.
         UIKitView(
@@ -55,18 +55,20 @@ internal actual fun PlatformLiquidToolbar(
             modifier = Modifier.fillMaxSize(),
             update = { bar -> bar.configureLiquidNavigationBar() },
             onRelease = {},
-            properties = UIKitInteropProperties(
-                interactionMode = null,
-                isNativeAccessibilityEnabled = true,
-                placedAsOverlay = false,
-            ),
+            properties =
+                UIKitInteropProperties(
+                    interactionMode = null,
+                    isNativeAccessibilityEnabled = true,
+                    placedAsOverlay = false,
+                ),
         )
 
         // Compose slot overlay.
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center,
         ) {
             Row(
@@ -95,10 +97,11 @@ private fun UINavigationBar.configureLiquidNavigationBar() {
     // An empty nav item lets the bar render its (glass) chrome without native text,
     // since the title is supplied by the Compose overlay.
     setItems(listOf(UINavigationItem(title = "")), animated = false)
-    val appearance = UINavigationBarAppearance().apply {
-        // Default background opts the bar into the system material — Liquid Glass on iOS 26.
-        configureWithDefaultBackground()
-    }
+    val appearance =
+        UINavigationBarAppearance().apply {
+            // Default background opts the bar into the system material — Liquid Glass on iOS 26.
+            configureWithDefaultBackground()
+        }
     standardAppearance = appearance
     scrollEdgeAppearance = appearance
     compactAppearance = appearance

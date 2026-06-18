@@ -20,6 +20,7 @@ import platform.UIKit.NSForegroundColorAttributeName
 import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventValueChanged
 import platform.UIKit.UIControlStateNormal
+import platform.UIKit.UIImage
 import platform.UIKit.UIControlStateSelected
 import platform.UIKit.UISegmentedControl
 import platform.darwin.NSObject
@@ -86,7 +87,17 @@ private fun <T : Any> UISegmentedControl.configureLiquidSegmentedControl(
 ) {
     removeAllSegments()
     segments.forEachIndexed { index, segment ->
-        insertSegmentWithTitle(segment.label, atIndex = index.toULong(), animated = false)
+        val systemImageName = segment.icon?.iosSystemName
+        if (systemImageName != null) {
+            val image = UIImage.systemImageNamed(systemImageName)
+            if (image != null) {
+                insertSegmentWithImage(image, atIndex = index.toULong(), animated = false)
+            } else {
+                insertSegmentWithTitle(segment.label, atIndex = index.toULong(), animated = false)
+            }
+        } else {
+            insertSegmentWithTitle(segment.label, atIndex = index.toULong(), animated = false)
+        }
         setEnabled(enabled, forSegmentAtIndex = index.toULong())
     }
     selectedSegmentIndex = segments.indexOfFirst { it.key == selectedKey }.coerceAtLeast(0).toLong()

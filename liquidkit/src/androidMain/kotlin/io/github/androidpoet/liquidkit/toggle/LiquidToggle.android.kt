@@ -1,9 +1,14 @@
+@file:OptIn(io.github.androidpoet.liquidkit.internal.InternalLiquidKitApi::class)
+
 package io.github.androidpoet.liquidkit.toggle
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import com.kyant.backdrop.backdrops.rememberCanvasBackdrop
+import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.LayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCanvasBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.components.LiquidToggle
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
 
@@ -15,15 +20,14 @@ internal actual fun PlatformLiquidToggle(
     enabled: Boolean,
     style: LiquidGlassStyle,
 ) {
-    val backdrop = rememberCanvasBackdrop {
-        drawRect(style.containerColor)
-    }
+    val layerCapture = LocalLiquidLayerBackdrop.current
+    val canvasBackdrop = rememberCanvasBackdrop { drawRect(style.containerColor) }
+    val backdrop: Backdrop = if (layerCapture is LayerBackdrop) layerCapture else canvasBackdrop
 
     LiquidToggle(
         selected = { checked },
         onSelect = { if (enabled) onCheckedChange(it) },
         backdrop = backdrop,
         modifier = modifier.alpha(if (enabled) 1f else 0.42f),
-        enabled = enabled,
     )
 }

@@ -1,6 +1,5 @@
 package io.github.androidpoet.liquidkit.internal.androidglass.catalog.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -30,18 +29,18 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
-import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberBackdrop
-import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCombinedBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.DampedDragAnimation
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.highlight.Highlight
-import com.kyant.backdrop.shadow.InnerShadow
-import com.kyant.backdrop.shadow.Shadow
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.lens
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.highlight.Highlight
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.InnerShadow
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.Shadow
 import com.kyant.shapes.Capsule
 import kotlinx.coroutines.flow.collectLatest
 
@@ -50,8 +49,7 @@ fun LiquidToggle(
     selected: () -> Boolean,
     onSelect: (Boolean) -> Unit,
     backdrop: Backdrop,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
     val isLightTheme = !isSystemInDarkTheme()
     val accentColor =
@@ -115,11 +113,6 @@ fun LiquidToggle(
     }
 
     val trackBackdrop = rememberLayerBackdrop()
-    fun toggle() {
-        val isSelected = !selected()
-        fraction = if (isSelected) 1f else 0f
-        onSelect(isSelected)
-    }
 
     Box(
         modifier,
@@ -129,13 +122,6 @@ fun LiquidToggle(
             Modifier
                 .layerBackdrop(trackBackdrop)
                 .clip(Capsule())
-                .clickable(
-                    interactionSource = null,
-                    indication = null,
-                    enabled = enabled,
-                    role = Role.Switch,
-                    onClick = ::toggle,
-                )
                 .drawBehind {
                     val fraction = dampedDragAnimation.value
                     drawRect(lerp(trackColor, accentColor, fraction))

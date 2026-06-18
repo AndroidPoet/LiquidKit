@@ -3,6 +3,7 @@ package io.github.androidpoet.liquidkit.navigation3
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -13,6 +14,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.github.androidpoet.liquidkit.internal.InternalLiquidKitApi
+import io.github.androidpoet.liquidkit.internal.LocalLiquidLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.captureToLiquidLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.rememberLiquidLayerBackdrop
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -193,6 +198,18 @@ public fun LiquidNav3TabScaffold(
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
     startRoute: NavKey = items.first().key,
+    bottomNavigation: @Composable BoxScope.(
+        state: LiquidNav3TabState,
+        onSelected: (NavKey) -> Unit,
+    ) -> Unit = { state, onSelected ->
+        LiquidBottomNavigation(
+            items = items,
+            selectedKey = state.selectedRoute,
+            onSelected = onSelected,
+            modifier = navigationModifier.align(Alignment.BottomCenter),
+            style = style,
+        )
+    },
 ) {
     val state = rememberLiquidNav3TabState(
         items = items,
@@ -207,9 +224,11 @@ public fun LiquidNav3TabScaffold(
         modifier = modifier,
         navigationModifier = navigationModifier,
         style = style,
+        bottomNavigation = bottomNavigation,
     )
 }
 
+@OptIn(InternalLiquidKitApi::class)
 @Composable
 public fun LiquidNav3TabScaffold(
     items: List<LiquidNavigationItem<NavKey>>,
@@ -218,22 +237,36 @@ public fun LiquidNav3TabScaffold(
     modifier: Modifier = Modifier,
     navigationModifier: Modifier = Modifier,
     style: LiquidGlassStyle = LiquidGlassStyle.NavigationBar,
-) {
-    require(items.isNotEmpty()) { "LiquidNav3TabScaffold requires at least one item." }
-
-    Box(modifier = modifier) {
-        LiquidNav3TabContent(
-            state = state,
-            entryProvider = entryProvider,
-            modifier = Modifier.matchParentSize(),
-        )
+    bottomNavigation: @Composable BoxScope.(
+        state: LiquidNav3TabState,
+        onSelected: (NavKey) -> Unit,
+    ) -> Unit = { state, onSelected ->
         LiquidBottomNavigation(
             items = items,
             selectedKey = state.selectedRoute,
-            onSelected = state::select,
+            onSelected = onSelected,
             modifier = navigationModifier.align(Alignment.BottomCenter),
             style = style,
         )
+    },
+) {
+    require(items.isNotEmpty()) { "LiquidNav3TabScaffold requires at least one item." }
+
+    val layerBackdrop = rememberLiquidLayerBackdrop()
+    Box(modifier = modifier) {
+        // Content records into the layer — must NOT read from it or a circular GraphicsLayer
+        // reference forms (content-capture layer → glass component inside → same layer → ∞).
+        Box(Modifier.matchParentSize().captureToLiquidLayerBackdrop(layerBackdrop)) {
+            LiquidNav3TabContent(
+                state = state,
+                entryProvider = entryProvider,
+                modifier = Modifier.matchParentSize(),
+            )
+        }
+        // Nav bar is scoped to the layer so it can blur the content behind it.
+        CompositionLocalProvider(LocalLiquidLayerBackdrop provides layerBackdrop) {
+            bottomNavigation(state, state::select)
+        }
     }
 }
 

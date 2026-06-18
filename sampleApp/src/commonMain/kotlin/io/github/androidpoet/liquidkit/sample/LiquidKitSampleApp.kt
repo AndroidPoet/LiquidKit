@@ -96,12 +96,6 @@ public fun LiquidKitSampleTabContent(
     modifier: Modifier = Modifier,
     extraContent: @Composable ColumnScope.() -> Unit = {},
 ) {
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var compactModeEnabled by remember { mutableStateOf(false) }
-    var intensity by remember { mutableStateOf(0.58f) }
-    var density by remember { mutableStateOf(ControlDensity.Regular) }
-    val densitySegments = rememberControlDensitySegments()
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -118,39 +112,10 @@ public fun LiquidKitSampleTabContent(
                 .widthIn(max = 620.dp),
         )
 
-        ComponentPanel(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 620.dp),
-        ) {
-            LiquidKitToggleRow(
-                label = "LiquidKit Toggle",
-                description = "Rendered by AndroidLiquidGlass on Android and UISwitch on iOS.",
-                value = notificationsEnabled,
-                onValueChange = { notificationsEnabled = it },
-            )
-            PanelDivider()
-            LiquidKitToggleRow(
-                label = "LiquidKit Compact Toggle",
-                description = "Same common API, platform-native renderer underneath.",
-                value = compactModeEnabled,
-                onValueChange = { compactModeEnabled = it },
-            )
-            PanelDivider()
-            LiquidKitSliderRow(
-                label = "LiquidKit Slider",
-                description = "Android uses AndroidLiquidGlass slider; iOS uses UISlider.",
-                value = intensity,
-                onValueChange = { intensity = it },
-            )
-            PanelDivider()
-            LiquidKitSegmentedRow(
-                label = "LiquidKit Segmented Control",
-                description = "Compact segmented choices with native UISegmentedControl on iOS.",
-                segments = densitySegments,
-                selected = density,
-                onSelected = { density = it },
-            )
+        when (selectedTab) {
+            LiquidKitSampleTab.Home -> HomeSamplePanel()
+            LiquidKitSampleTab.Search -> ControlsSamplePanel()
+            LiquidKitSampleTab.Settings -> SettingsSamplePanel()
         }
 
         extraContent()
@@ -170,6 +135,152 @@ public fun LiquidKitSampleTabRoot(
             .fillMaxSize()
             .background(sampleBackground()),
     )
+}
+
+@Composable
+private fun HomeSamplePanel() {
+    var enabled by remember { mutableStateOf(true) }
+    var intensity by remember { mutableStateOf(0.58f) }
+
+    InvertedPanel(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 620.dp),
+    ) {
+        BasicText(
+            text = "One API. Native ownership.",
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 23.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 28.sp,
+            ),
+        )
+        BasicText(
+            text = "Android renders Kyant-style liquid controls. iOS keeps native tab ownership.",
+            style = TextStyle(
+                color = Color(0xFFD7D7D7),
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+            ),
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        InvertedMetricRow(label = "Tab layer", value = "Nav3")
+        InvertedMetricRow(label = "Android renderer", value = "LiquidGlass")
+    }
+
+    ComponentPanel(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 620.dp),
+    ) {
+        PanelSectionTitle(
+            title = "Home controls",
+            description = "A simple monochrome surface for checking the shared API.",
+        )
+        PanelDivider()
+        LiquidKitToggleRow(
+            label = "Liquid surface",
+            description = "Toggle the sample state without changing the tab renderer.",
+            value = enabled,
+            onValueChange = { enabled = it },
+        )
+        PanelDivider()
+        LiquidKitSliderRow(
+            label = "Glass intensity",
+            description = "Tune the shared control state used by this preview.",
+            value = intensity,
+            onValueChange = { intensity = it },
+        )
+        PanelDivider()
+        StatusRow(label = "Renderer", value = "AndroidLiquidGlass")
+        PanelDivider()
+        StatusRow(label = "Navigation", value = "Compose Nav3 tabs")
+    }
+}
+
+@Composable
+private fun ControlsSamplePanel() {
+    var density by remember { mutableStateOf(ControlDensity.Regular) }
+    var compactModeEnabled by remember { mutableStateOf(false) }
+    var intensity by remember { mutableStateOf(0.42f) }
+    val densitySegments = rememberControlDensitySegments()
+
+    ComponentPanel(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 620.dp),
+    ) {
+        PanelSectionTitle(
+            title = "Controls lab",
+            description = "A clean black and white workbench for component states.",
+        )
+        PanelDivider()
+        LiquidKitSegmentedRow(
+            label = "Density",
+            description = "Switch layout density for app-level controls.",
+            segments = densitySegments,
+            selected = density,
+            onSelected = { density = it },
+        )
+        PanelDivider()
+        LiquidKitToggleRow(
+            label = "Compact controls",
+            description = "Keep touch targets stable while reducing visual weight.",
+            value = compactModeEnabled,
+            onValueChange = { compactModeEnabled = it },
+        )
+        PanelDivider()
+        LiquidKitSliderRow(
+            label = "Response",
+            description = "Exercise continuous input on the Android liquid slider.",
+            value = intensity,
+            onValueChange = { intensity = it },
+        )
+    }
+}
+
+@Composable
+private fun SettingsSamplePanel() {
+    var nativeTabs by remember { mutableStateOf(true) }
+    var reducedMotion by remember { mutableStateOf(false) }
+    var density by remember { mutableStateOf(ControlDensity.Regular) }
+    val densitySegments = rememberControlDensitySegments()
+
+    ComponentPanel(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 620.dp),
+    ) {
+        PanelSectionTitle(
+            title = "Library settings",
+            description = "A focused settings surface for platform behavior.",
+        )
+        PanelDivider()
+        LiquidKitToggleRow(
+            label = "Native tabs on iOS",
+            description = "Keep iOS tab ownership in SwiftUI and Android tabs in Compose.",
+            value = nativeTabs,
+            onValueChange = { nativeTabs = it },
+        )
+        PanelDivider()
+        LiquidKitToggleRow(
+            label = "Reduced motion",
+            description = "Preview a quieter configuration for motion-sensitive users.",
+            value = reducedMotion,
+            onValueChange = { reducedMotion = it },
+        )
+        PanelDivider()
+        LiquidKitSegmentedRow(
+            label = "Default density",
+            description = "Choose the default control spacing for host apps.",
+            segments = densitySegments,
+            selected = density,
+            onSelected = { density = it },
+        )
+        PanelDivider()
+        StatusRow(label = "Package", value = "LiquidKit")
+    }
 }
 
 @Serializable
@@ -232,10 +343,15 @@ private fun Header(
     selectedTab: LiquidKitSampleTab,
     modifier: Modifier = Modifier,
 ) {
+    val title = when (selectedTab) {
+        LiquidKitSampleTab.Home -> "LiquidKit Home"
+        LiquidKitSampleTab.Search -> "Controls Lab"
+        LiquidKitSampleTab.Settings -> "Settings"
+    }
     val subtitle = when (selectedTab) {
-        LiquidKitSampleTab.Home -> "Bottom navigation, toggle, slider, and segmented controls."
-        LiquidKitSampleTab.Search -> "Android uses vendored AndroidLiquidGlass controls."
-        LiquidKitSampleTab.Settings -> "iOS 26 uses native SwiftUI TabView while Compose renders tab content."
+        LiquidKitSampleTab.Home -> "Bottom navigation with a single moving liquid selection."
+        LiquidKitSampleTab.Search -> "Android controls rendered by vendored AndroidLiquidGlass."
+        LiquidKitSampleTab.Settings -> "Platform ownership stays simple: SwiftUI tabs on iOS, Compose tabs on Android."
     }
 
     Column(
@@ -243,9 +359,9 @@ private fun Header(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         BasicText(
-            text = "LiquidKit",
+            text = title,
             style = TextStyle(
-                color = Color(0xFF0F1720),
+                color = Color(0xFF070707),
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 38.sp,
@@ -254,12 +370,75 @@ private fun Header(
         BasicText(
             text = subtitle,
             style = TextStyle(
-                color = Color(0xFF4A5868),
+                color = Color(0xFF4A4A4A),
                 fontSize = 15.sp,
                 lineHeight = 21.sp,
             ),
         )
     }
+}
+
+@Composable
+private fun InvertedPanel(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .background(
+                color = Color(0xFF080808),
+                shape = RoundedCornerShape(32.dp),
+            )
+            .border(
+                width = 1.dp,
+                color = Color(0xFF2A2A2A),
+                shape = RoundedCornerShape(32.dp),
+            )
+            .padding(22.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        content = content,
+    )
+}
+
+@Composable
+private fun InvertedMetricRow(
+    label: String,
+    value: String,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BasicText(
+            text = label,
+            modifier = Modifier.weight(1f),
+            style = TextStyle(
+                color = Color(0xFFAFAFAF),
+                fontSize = 14.sp,
+            ),
+        )
+        BasicText(
+            text = value,
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun PanelSectionTitle(
+    title: String,
+    description: String,
+) {
+    LabelBlock(
+        label = title,
+        description = description,
+        modifier = Modifier.padding(vertical = 16.dp),
+    )
 }
 
 @Composable
@@ -270,12 +449,12 @@ private fun ComponentPanel(
     Column(
         modifier = modifier
             .background(
-                color = Color(0xCCFFFFFF),
+                color = Color(0xF7FFFFFF),
                 shape = RoundedCornerShape(28.dp),
             )
             .border(
                 width = 1.dp,
-                color = Color(0x80FFFFFF),
+                color = Color(0x1F000000),
                 shape = RoundedCornerShape(28.dp),
             )
             .padding(horizontal = 18.dp, vertical = 8.dp),
@@ -284,12 +463,44 @@ private fun ComponentPanel(
 }
 
 @Composable
+private fun StatusRow(
+    label: String,
+    value: String,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BasicText(
+            text = label,
+            modifier = Modifier.weight(1f),
+            style = TextStyle(
+                color = Color(0xFF505050),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+        )
+        BasicText(
+            text = value,
+            style = TextStyle(
+                color = Color(0xFF070707),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
+    }
+}
+
+@Composable
 private fun PanelDivider() {
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(Color(0x1F4A5868)),
+            .background(Color(0x1F000000)),
     )
 }
 
@@ -365,7 +576,7 @@ private fun LiquidKitSliderRow(
             BasicText(
                 text = "${(value * 100).toInt()}%",
                 style = TextStyle(
-                    color = Color(0xFF111820),
+                    color = Color(0xFF070707),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -419,7 +630,7 @@ private fun LabelBlock(
         BasicText(
             text = label,
             style = TextStyle(
-                color = Color(0xFF111820),
+                color = Color(0xFF070707),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
             ),
@@ -427,7 +638,7 @@ private fun LabelBlock(
         BasicText(
             text = description,
             style = TextStyle(
-                color = Color(0xFF43515F),
+                color = Color(0xFF555555),
                 fontSize = 13.sp,
                 lineHeight = 18.sp,
             ),
@@ -437,8 +648,8 @@ private fun LabelBlock(
 
 private fun sampleBackground(): Brush = Brush.linearGradient(
     colors = listOf(
-        Color(0xFFEAF5F7),
-        Color(0xFFF6ECE5),
-        Color(0xFFE9EDF8),
+        Color(0xFFF7F7F7),
+        Color(0xFFEDEDED),
+        Color(0xFFDADADA),
     ),
 )

@@ -13,8 +13,8 @@ object LiquidKitConfiguration {
 
     const val libraryNamespace = "io.github.androidpoet.liquidkit"
     const val navigation3Namespace = "io.github.androidpoet.liquidkit.navigation3"
-    const val sampleNamespace = "com.kyant.backdrop.catalog"
-    const val sampleApplicationId = "com.kyant.backdrop.catalog"
+    const val sampleNamespace = "io.github.androidpoet.liquidkit.sample"
+    const val sampleApplicationId = "io.github.androidpoet.liquidkit.sample"
 
     const val libraryFrameworkName = "LiquidKit"
     const val sampleFrameworkName = "LiquidKitSample"

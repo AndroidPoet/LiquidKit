@@ -28,7 +28,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -37,19 +36,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.util.lerp
-import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCombinedBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.DampedDragAnimation
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.InteractiveHighlight
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
-import com.kyant.backdrop.highlight.Highlight
-import com.kyant.backdrop.shadow.InnerShadow
-import com.kyant.backdrop.shadow.Shadow
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.lens
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.vibrancy
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.highlight.Highlight
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.InnerShadow
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.Shadow
 import com.kyant.shapes.Capsule
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
@@ -64,19 +63,14 @@ fun LiquidBottomTabs(
     backdrop: Backdrop,
     tabsCount: Int,
     modifier: Modifier = Modifier,
-    accentColor: Color = Color.Unspecified,
-    containerColor: Color = Color.Unspecified,
-    selectedSurfaceColor: Color = Color.Unspecified,
     content: @Composable RowScope.() -> Unit
 ) {
     val isLightTheme = !isSystemInDarkTheme()
-    val resolvedAccentColor =
-        if (accentColor.isSpecified) accentColor
-        else if (isLightTheme) Color(0xFF0088FF)
+    val accentColor =
+        if (isLightTheme) Color(0xFF0088FF)
         else Color(0xFF0091FF)
-    val resolvedContainerColor =
-        if (containerColor.isSpecified) containerColor
-        else if (isLightTheme) Color(0xFFFAFAFA).copy(0.4f)
+    val containerColor =
+        if (isLightTheme) Color(0xFFFAFAFA).copy(0.4f)
         else Color(0xFF121212).copy(0.4f)
 
     val tabsBackdrop = rememberLayerBackdrop()
@@ -102,7 +96,7 @@ fun LiquidBottomTabs(
 
         val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
         val animationScope = rememberCoroutineScope()
-        var currentIndex by remember {
+        var currentIndex by remember(selectedTabIndex) {
             mutableIntStateOf(selectedTabIndex())
         }
         val dampedDragAnimation = remember(animationScope) {
@@ -183,7 +177,7 @@ fun LiquidBottomTabs(
                         scaleX = scale
                         scaleY = scale
                     },
-                    onDrawSurface = { drawRect(resolvedContainerColor) }
+                    onDrawSurface = { drawRect(containerColor) }
                 )
                 .then(interactiveHighlight.modifier)
                 .height(64f.dp)
@@ -222,13 +216,13 @@ fun LiquidBottomTabs(
                             val progress = dampedDragAnimation.pressProgress
                             Highlight.Default.copy(alpha = progress)
                         },
-                        onDrawSurface = { drawRect(resolvedContainerColor) }
+                        onDrawSurface = { drawRect(containerColor) }
                     )
                     .then(interactiveHighlight.modifier)
                     .height(56f.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 4f.dp)
-                    .graphicsLayer(colorFilter = ColorFilter.tint(resolvedAccentColor)),
+                    .graphicsLayer(colorFilter = ColorFilter.tint(accentColor)),
                 verticalAlignment = Alignment.CenterVertically,
                 content = content
             )
@@ -279,15 +273,11 @@ fun LiquidBottomTabs(
                     },
                     onDrawSurface = {
                         val progress = dampedDragAnimation.pressProgress
-                        if (selectedSurfaceColor.isSpecified) {
-                            drawRect(selectedSurfaceColor, alpha = 1f - progress)
-                        } else {
-                            drawRect(
-                                if (isLightTheme) Color.Black.copy(0.1f)
-                                else Color.White.copy(0.1f),
-                                alpha = 1f - progress
-                            )
-                        }
+                        drawRect(
+                            if (isLightTheme) Color.Black.copy(0.1f)
+                            else Color.White.copy(0.1f),
+                            alpha = 1f - progress
+                        )
                         drawRect(Color.Black.copy(alpha = 0.03f * progress))
                     }
                 )

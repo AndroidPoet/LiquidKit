@@ -3,6 +3,7 @@ package io.github.androidpoet.liquidkit.toggle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
+import io.github.androidpoet.liquidkit.LocalLiquidGlassStyle
 
 @Composable
 public fun LiquidToggle(
@@ -10,7 +11,7 @@ public fun LiquidToggle(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    style: LiquidGlassStyle = LiquidGlassStyle.Control,
+    style: LiquidGlassStyle = LocalLiquidGlassStyle.current,
 ) {
     PlatformLiquidToggle(
         checked = checked,

@@ -84,6 +84,11 @@ private fun <T : Any> UITabBar.configureLiquidTabBar(
             selectedImage = image,
         ).apply {
             tag = index.toLong()
+            badgeValue = when (item.badge) {
+                null -> null
+                0 -> ""
+                else -> item.badge.coerceAtMost(99).toString()
+            }
         }
     }
 

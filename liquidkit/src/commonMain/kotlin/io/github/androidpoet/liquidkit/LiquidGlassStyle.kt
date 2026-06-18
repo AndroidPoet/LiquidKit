@@ -14,6 +14,9 @@ public data class LiquidGlassStyle(
     public val selectedContentColor: Color,
 ) {
     public companion object {
+
+        // ── Light mode ──────────────────────────────────────────────────────
+
         public val Surface: LiquidGlassStyle = LiquidGlassStyle(
             cornerRadius = 24.dp,
             containerColor = Color.White.copy(alpha = 0.28f),
@@ -36,6 +39,32 @@ public data class LiquidGlassStyle(
             selectedContainerColor = Color.White.copy(alpha = 0.42f),
             contentColor = Color(0xFF4E5968),
             selectedContentColor = Color(0xFF101418),
+        )
+
+        // ── Dark mode ───────────────────────────────────────────────────────
+
+        public val SurfaceDark: LiquidGlassStyle = LiquidGlassStyle(
+            cornerRadius = 24.dp,
+            containerColor = Color.White.copy(alpha = 0.10f),
+            selectedContainerColor = Color.White.copy(alpha = 0.18f),
+            contentColor = Color.White.copy(alpha = 0.55f),
+            selectedContentColor = Color.White.copy(alpha = 0.92f),
+        )
+
+        public val ControlDark: LiquidGlassStyle = LiquidGlassStyle(
+            cornerRadius = 18.dp,
+            containerColor = Color.White.copy(alpha = 0.12f),
+            selectedContainerColor = Color.White.copy(alpha = 0.22f),
+            contentColor = Color.White.copy(alpha = 0.55f),
+            selectedContentColor = Color.White.copy(alpha = 0.92f),
+        )
+
+        public val NavigationBarDark: LiquidGlassStyle = LiquidGlassStyle(
+            cornerRadius = 28.dp,
+            containerColor = Color.White.copy(alpha = 0.10f),
+            selectedContainerColor = Color.White.copy(alpha = 0.18f),
+            contentColor = Color.White.copy(alpha = 0.50f),
+            selectedContentColor = Color.White.copy(alpha = 0.92f),
         )
     }
 }

@@ -49,6 +49,7 @@ internal actual fun PlatformLiquidToggle(
             UISwitch().apply {
                 setOn(checked)
                 this.enabled = enabled
+                onTintColor = style.selectedContentColor.toUIColor()
                 backgroundColor = UIColor.clearColor
                 setOpaque(false)
                 addTarget(
@@ -64,6 +65,7 @@ internal actual fun PlatformLiquidToggle(
                 uiSwitch.setOn(checked, animated = true)
             }
             uiSwitch.enabled = enabled
+            uiSwitch.onTintColor = style.selectedContentColor.toUIColor()
         },
         onRelease = {},
         properties = UIKitInteropProperties(

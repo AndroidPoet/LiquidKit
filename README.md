@@ -74,6 +74,17 @@ LiquidTabScaffold(items = items) { selectedTab ->
 }
 ```
 
+Hide or replace only the bottom bar when another shell owns it:
+
+```kotlin
+LiquidTabScaffold(
+    items = items,
+    bottomNavigation = { _, _ -> },
+) { selectedTab ->
+    TabContent(selectedTab)
+}
+```
+
 ## Navigation 3
 
 Use `liquidkit-navigation3` only for Compose-owned bottom-navigation tab stacks.
@@ -116,7 +127,8 @@ LiquidNav3TabScaffold(
 ```
 
 For native iOS 26 Liquid Glass tabs, keep `TabView` in SwiftUI and host Compose
-screens inside each tab.
+screens inside each tab. If you reuse a Compose tab scaffold there, pass an empty
+`bottomNavigation` slot so SwiftUI is the only tab bar.
 
 ## Build
 

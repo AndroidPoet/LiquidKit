@@ -4,3 +4,6 @@
 /*/build/
 iosApp/DerivedData/
 local.properties
+
+.idea/
+xcuserdata/

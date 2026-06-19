@@ -204,6 +204,45 @@ public fun LiquidKitSampleTabRoot(
     )
 }
 
+/**
+ * A self-contained tab screen that owns its own component-showcase overlay.
+ *
+ * Used by the iOS native [TabView] (one Compose view controller per tab) so iOS
+ * reaches the exact same full-screen component showcases as the Compose-owned
+ * Android shell — keeping both platforms the same app while iOS retains its
+ * native SwiftUI tab chrome.
+ */
+@Composable
+public fun LiquidKitSampleTabScreen(
+    selectedTab: LiquidKitSampleTab,
+    modifier: Modifier = Modifier,
+) {
+    var openShowcase by remember { mutableStateOf<ShowcaseEntry?>(null) }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        LiquidKitSampleTabRoot(
+            selectedTab = selectedTab,
+            onOpenShowcase = { openShowcase = it },
+            modifier = Modifier.fillMaxSize(),
+        )
+
+        val showcase = openShowcase
+        if (showcase != null) {
+            Box(modifier = Modifier.fillMaxSize().background(sampleBackground())) {
+                ShowcaseEntryContent(showcase, modifier = Modifier.fillMaxSize())
+                ShowcaseBackChip(
+                    onClick = { openShowcase = null },
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopStart)
+                            .safeDrawingPadding()
+                            .padding(16.dp),
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun HomeSamplePanel(onOpenShowcase: (ShowcaseEntry) -> Unit = {}) {
     var enabled by remember { mutableStateOf(true) }

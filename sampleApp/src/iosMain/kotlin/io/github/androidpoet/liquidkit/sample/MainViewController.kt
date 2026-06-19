@@ -16,5 +16,5 @@ fun SettingsViewController(): UIViewController = tabRootViewController(LiquidKit
 
 private fun tabRootViewController(tab: LiquidKitSampleTab): UIViewController =
     ComposeUIViewController {
-        LiquidKitSampleTabRoot(selectedTab = tab)
+        LiquidKitSampleTabScreen(selectedTab = tab)
     }

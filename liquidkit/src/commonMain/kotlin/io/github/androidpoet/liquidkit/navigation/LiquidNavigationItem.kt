@@ -9,4 +9,9 @@ public data class LiquidNavigationItem<T : Any>(
     public val label: String,
     public val icon: LiquidIcon? = null,
     public val contentDescription: String = label,
+    /**
+     * Optional badge. `null` = no badge. `0` = dot indicator. `> 0` = numeric count.
+     * Capped at 99 in platform renderers.
+     */
+    public val badge: Int? = null,
 )

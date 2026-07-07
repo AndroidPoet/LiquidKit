@@ -1,6 +1,7 @@
 package io.github.androidpoet.liquidkit.internal.androidglass.catalog.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -21,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -30,20 +30,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.util.lerp
-import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberBackdrop
-import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.highlight.Highlight
-import com.kyant.backdrop.shadow.InnerShadow
-import com.kyant.backdrop.shadow.Shadow
-import com.kyant.shapes.Capsule
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.layerBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberCombinedBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.backdrops.rememberLayerBackdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.DampedDragAnimation
-import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.inspectDragGestures
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.lens
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.highlight.Highlight
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.InnerShadow
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.shadow.Shadow
+import com.kyant.shapes.Capsule
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -53,29 +52,24 @@ fun LiquidSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     visibilityThreshold: Float,
     backdrop: Backdrop,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    activeTrackColor: Color = Color.Unspecified,
-    inactiveTrackColor: Color = Color.Unspecified,
-    thumbColor: Color = Color.White,
+    modifier: Modifier = Modifier
 ) {
     val isLightTheme = !isSystemInDarkTheme()
-    val resolvedActiveTrackColor =
-        if (activeTrackColor.isSpecified) activeTrackColor
-        else if (isLightTheme) Color(0xFF0088FF)
+    val accentColor =
+        if (isLightTheme) Color(0xFF0088FF)
         else Color(0xFF0091FF)
-    val resolvedInactiveTrackColor =
-        if (inactiveTrackColor.isSpecified) inactiveTrackColor
-        else if (isLightTheme) Color(0xFF787878).copy(0.2f)
+    val trackColor =
+        if (isLightTheme) Color(0xFF787878).copy(0.2f)
         else Color(0xFF787880).copy(0.36f)
 
     val trackBackdrop = rememberLayerBackdrop()
 
     BoxWithConstraints(
         modifier.fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart,
+        contentAlignment = Alignment.CenterStart
     ) {
         val trackWidth = constraints.maxWidth
+
         val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
         val animationScope = rememberCoroutineScope()
         var didDrag by remember { mutableStateOf(false) }
@@ -89,23 +83,20 @@ fun LiquidSlider(
                 pressedScale = 1.5f,
                 onDragStarted = {},
                 onDragStopped = {
-                    if (didDrag && enabled) {
+                    if (didDrag) {
                         onValueChange(targetValue)
                     }
-                    didDrag = false
                 },
                 onDrag = { _, dragAmount ->
-                    if (enabled) {
-                        if (!didDrag) {
-                            didDrag = dragAmount.x != 0f
-                        }
-                        val delta = (valueRange.endInclusive - valueRange.start) * (dragAmount.x / trackWidth)
-                        onValueChange(
-                            if (isLtr) (targetValue + delta).coerceIn(valueRange)
-                            else (targetValue - delta).coerceIn(valueRange),
-                        )
+                    if (!didDrag) {
+                        didDrag = dragAmount.x != 0f
                     }
-                },
+                    val delta = (valueRange.endInclusive - valueRange.start) * (dragAmount.x / trackWidth)
+                    onValueChange(
+                        if (isLtr) (targetValue + delta).coerceIn(valueRange)
+                        else (targetValue - delta).coerceIn(valueRange)
+                    )
+                }
             )
         }
         LaunchedEffect(dampedDragAnimation) {
@@ -116,56 +107,41 @@ fun LiquidSlider(
                     }
                 }
         }
-        fun updateFromPosition(positionX: Float) {
-            val progress = (positionX / trackWidth).fastCoerceIn(0f, 1f)
-            val targetValue =
-                if (isLtr) {
-                    valueRange.start + (valueRange.endInclusive - valueRange.start) * progress
-                } else {
-                    valueRange.endInclusive - (valueRange.endInclusive - valueRange.start) * progress
-                }
-            val coercedValue = targetValue.coerceIn(valueRange)
-            dampedDragAnimation.updateValue(coercedValue)
-            onValueChange(coercedValue)
-        }
 
         Box(Modifier.layerBackdrop(trackBackdrop)) {
             Box(
                 Modifier
                     .clip(Capsule())
-                    .background(resolvedInactiveTrackColor)
-                    .height(6.dp)
-                    .fillMaxWidth(),
+                    .background(trackColor)
+                    .pointerInput(animationScope) {
+                        detectTapGestures { position ->
+                            val delta = (valueRange.endInclusive - valueRange.start) * (position.x / trackWidth)
+                            val targetValue =
+                                (if (isLtr) valueRange.start + delta
+                                else valueRange.endInclusive - delta)
+                                    .coerceIn(valueRange)
+                            dampedDragAnimation.animateToValue(targetValue)
+                            onValueChange(targetValue)
+                        }
+                    }
+                    .height(6f.dp)
+                    .fillMaxWidth()
             )
 
             Box(
                 Modifier
                     .clip(Capsule())
-                    .background(resolvedActiveTrackColor)
-                    .height(6.dp)
+                    .background(accentColor)
+                    .height(6f.dp)
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         val width = (constraints.maxWidth * dampedDragAnimation.progress).fastRoundToInt()
                         layout(width, placeable.height) {
                             placeable.place(0, 0)
                         }
-                    },
+                    }
             )
         }
-
-        Box(
-            Modifier
-                .height(48.dp)
-                .fillMaxWidth()
-                .pointerInput(enabled, trackWidth, isLtr, valueRange) {
-                    if (enabled) {
-                        inspectDragGestures(
-                            onDragStart = { down -> updateFromPosition(down.position.x) },
-                            onDrag = { change, _ -> updateFromPosition(change.position.x) },
-                        )
-                    }
-                },
-        )
 
         Box(
             Modifier
@@ -174,7 +150,7 @@ fun LiquidSlider(
                         (-size.width / 2f + trackWidth * dampedDragAnimation.progress)
                             .fastCoerceIn(-size.width / 4f, trackWidth - size.width * 3f / 4f) * if (isLtr) 1f else -1f
                 }
-                .then(if (enabled) dampedDragAnimation.modifier else Modifier)
+                .then(dampedDragAnimation.modifier)
                 .drawBackdrop(
                     backdrop = rememberCombinedBackdrop(
                         backdrop,
@@ -185,7 +161,7 @@ fun LiquidSlider(
                             scale(scaleX, scaleY) {
                                 drawBackdrop()
                             }
-                        },
+                        }
                     ),
                     shape = { Capsule() },
                     effects = {
@@ -194,7 +170,7 @@ fun LiquidSlider(
                         lens(
                             10f.dp.toPx() * progress,
                             14f.dp.toPx() * progress,
-                            chromaticAberration = true,
+                            chromaticAberration = true
                         )
                     },
                     highlight = {
@@ -202,20 +178,20 @@ fun LiquidSlider(
                         Highlight.Ambient.copy(
                             width = Highlight.Ambient.width / 1.5f,
                             blurRadius = Highlight.Ambient.blurRadius / 1.5f,
-                            alpha = progress,
+                            alpha = progress
                         )
                     },
                     shadow = {
                         Shadow(
-                            radius = 4.dp,
-                            color = Color.Black.copy(alpha = 0.05f),
+                            radius = 4f.dp,
+                            color = Color.Black.copy(alpha = 0.05f)
                         )
                     },
                     innerShadow = {
                         val progress = dampedDragAnimation.pressProgress
                         InnerShadow(
-                            radius = 4.dp * progress,
-                            alpha = progress,
+                            radius = 4f.dp * progress,
+                            alpha = progress
                         )
                     },
                     layerBlock = {
@@ -227,10 +203,10 @@ fun LiquidSlider(
                     },
                     onDrawSurface = {
                         val progress = dampedDragAnimation.pressProgress
-                        drawRect(thumbColor.copy(alpha = 1f - progress))
-                    },
+                        drawRect(Color.White.copy(alpha = 1f - progress))
+                    }
                 )
-                .size(40.dp, 24.dp),
+                .size(40f.dp, 24f.dp)
         )
     }
 }

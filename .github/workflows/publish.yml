@@ -2,12 +2,15 @@ name: Publish
 
 on:
   release:
-    types: [released]
+    types: [published]
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   publish:
-    name: Validate release publication
+    name: Publish to Maven Central
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -22,5 +25,14 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build library publications
-        run: ./gradlew :liquidkit:publishAllPublicationsToLocalBuildRepository :liquidkit-navigation3:publishAllPublicationsToLocalBuildRepository --stacktrace
+      - name: Verify before publishing
+        run: ./gradlew spotlessCheck detekt koverXmlReport --stacktrace
+
+      - name: Publish and release to Maven Central
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --stacktrace
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}

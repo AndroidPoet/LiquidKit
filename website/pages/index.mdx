@@ -1,0 +1,57 @@
+---
+title: LiquidKit
+description: Liquid Glass UI for Compose Multiplatform — Android shader rendering, genuine native iOS controls.
+---
+
+import { Hero } from '../components/Hero'
+import { Cards } from 'nextra/components'
+
+<Hero />
+
+LiquidKit is a Kotlin Multiplatform component kit that brings the Liquid Glass look to
+Compose Multiplatform. You write against **one shared Compose API**; each platform renders it
+the right way — Android draws the glass with an internal backdrop / Liquid Glass shader engine,
+while iOS wraps **genuine native UIKit controls** for authentic system Liquid Glass on iOS 26.
+
+```kotlin
+import io.github.androidpoet.liquidkit.button.LiquidButton
+import io.github.androidpoet.liquidkit.toggle.LiquidToggle
+
+@Composable
+fun Demo() {
+    var on by remember { mutableStateOf(true) }
+
+    LiquidButton(onClick = { /* … */ }) {
+        Text("Continue")
+    }
+
+    LiquidToggle(
+        checked = on,
+        onCheckedChange = { on = it },
+    )
+}
+```
+
+## Why LiquidKit
+
+- **One cross-platform Compose API** — the same composables on Android and iOS.
+- **Android shader rendering** — an internal backdrop capture + refraction / Liquid Glass shader
+  engine renders the glass look in-Compose, no platform views required.
+- **Genuine native iOS controls** — each component wraps real UIKit controls, so on iOS 26 they
+  pick up authentic system Liquid Glass, with a graceful blur fallback on earlier versions.
+- **Full iOS-parity component set** — buttons, surfaces, menus, pickers, fields, steppers, media
+  controls, toolbars, sheets, toggles, sliders, segmented controls and navigation.
+
+## Explore
+
+<Cards>
+  <Cards.Card title="Getting Started" href="/getting-started" arrow />
+  <Cards.Card title="Architecture" href="/architecture" arrow />
+  <Cards.Card title="Buttons & FAB" href="/components-buttons" arrow />
+  <Cards.Card title="Surfaces" href="/components-surfaces" arrow />
+  <Cards.Card title="Menus & Pickers" href="/components-menus-pickers" arrow />
+  <Cards.Card title="Fields" href="/components-fields" arrow />
+  <Cards.Card title="Stepper & Media" href="/components-stepper-media" arrow />
+  <Cards.Card title="Toolbar & Sheet" href="/components-toolbar-sheet" arrow />
+  <Cards.Card title="Toggles, Sliders & Segmented" href="/components-toggles-sliders" arrow />
+</Cards>

@@ -1,0 +1,39 @@
+---
+title: Toolbar & Sheet
+description: LiquidToolbar and LiquidSheet — top app bar and bottom sheet with native UINavigationBar and glass surfaces on iOS.
+---
+
+# Toolbar & Sheet
+
+`LiquidToolbar` is a Liquid Glass top app bar with leading and trailing action slots, and
+`LiquidSheet` is a glass bottom sheet.
+
+```kotlin
+import io.github.androidpoet.liquidkit.toolbar.LiquidToolbar
+import io.github.androidpoet.liquidkit.sheet.LiquidSheet
+
+@Composable
+fun Chrome() {
+    LiquidToolbar(
+        title = "Library",
+        leading = { LiquidIcon(/* back */) },
+        trailing = { LiquidIcon(/* more */) },
+    )
+
+    var sheetVisible by remember { mutableStateOf(false) }
+    LiquidSheet(
+        visible = sheetVisible,
+        onDismiss = { sheetVisible = false },
+    ) {
+        Text("Glass sheet content")
+    }
+}
+```
+
+## Android vs iOS
+
+- **Android** — both render as Liquid Glass surfaces via the shader engine.
+- **iOS** — the toolbar wraps a native `UINavigationBar`; the sheet renders a native glass surface
+  (`UIVisualEffectView` with `UIGlassEffect` on iOS 26, `UIBlurEffect` `systemMaterial` fallback on
+  earlier versions). Native sheet presentation — detents, grabber, interactive dismiss — stays with
+  the SwiftUI host.

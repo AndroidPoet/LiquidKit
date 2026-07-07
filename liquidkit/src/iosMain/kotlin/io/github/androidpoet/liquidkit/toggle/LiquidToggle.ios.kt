@@ -11,6 +11,7 @@ import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
+import io.github.androidpoet.liquidkit.internal.toUIColor
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -40,15 +41,17 @@ internal actual fun PlatformLiquidToggle(
     style: LiquidGlassStyle,
 ) {
     val currentOnCheckedChange = rememberUpdatedState(onCheckedChange)
-    val target = remember {
-        LiquidSwitchTarget { currentOnCheckedChange.value(it) }
-    }
+    val target =
+        remember {
+            LiquidSwitchTarget { currentOnCheckedChange.value(it) }
+        }
 
     UIKitView(
         factory = {
             UISwitch().apply {
                 setOn(checked)
                 this.enabled = enabled
+                onTintColor = style.selectedContentColor.toUIColor()
                 backgroundColor = UIColor.clearColor
                 setOpaque(false)
                 addTarget(
@@ -64,12 +67,14 @@ internal actual fun PlatformLiquidToggle(
                 uiSwitch.setOn(checked, animated = true)
             }
             uiSwitch.enabled = enabled
+            uiSwitch.onTintColor = style.selectedContentColor.toUIColor()
         },
         onRelease = {},
-        properties = UIKitInteropProperties(
-            interactionMode = UIKitInteropInteractionMode.Cooperative(),
-            isNativeAccessibilityEnabled = true,
-            placedAsOverlay = true,
-        ),
+        properties =
+            UIKitInteropProperties(
+                interactionMode = UIKitInteropInteractionMode.Cooperative(),
+                isNativeAccessibilityEnabled = true,
+                placedAsOverlay = true,
+            ),
     )
 }

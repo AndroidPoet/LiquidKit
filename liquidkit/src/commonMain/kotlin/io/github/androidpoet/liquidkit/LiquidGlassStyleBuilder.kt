@@ -10,10 +10,11 @@ public fun liquidGlassStyle(
     selectedContainerColor: Color = base.selectedContainerColor,
     contentColor: Color = base.contentColor,
     selectedContentColor: Color = base.selectedContentColor,
-): LiquidGlassStyle = LiquidGlassStyle(
-    cornerRadius = cornerRadius,
-    containerColor = containerColor,
-    selectedContainerColor = selectedContainerColor,
-    contentColor = contentColor,
-    selectedContentColor = selectedContentColor,
-)
+): LiquidGlassStyle =
+    LiquidGlassStyle(
+        cornerRadius = cornerRadius,
+        containerColor = containerColor,
+        selectedContainerColor = selectedContainerColor,
+        contentColor = contentColor,
+        selectedContentColor = selectedContentColor,
+    )

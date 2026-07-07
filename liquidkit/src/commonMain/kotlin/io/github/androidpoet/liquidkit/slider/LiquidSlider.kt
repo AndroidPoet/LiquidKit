@@ -3,6 +3,7 @@ package io.github.androidpoet.liquidkit.slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.androidpoet.liquidkit.LiquidGlassStyle
+import io.github.androidpoet.liquidkit.LocalLiquidGlassStyle
 
 @Composable
 public fun LiquidSlider(
@@ -11,7 +12,7 @@ public fun LiquidSlider(
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     enabled: Boolean = true,
-    style: LiquidGlassStyle = LiquidGlassStyle.Control,
+    style: LiquidGlassStyle = LocalLiquidGlassStyle.current,
 ) {
     require(valueRange.start < valueRange.endInclusive) {
         "LiquidSlider requires a non-empty valueRange."

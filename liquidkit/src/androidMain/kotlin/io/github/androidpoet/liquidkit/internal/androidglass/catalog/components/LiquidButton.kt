@@ -19,13 +19,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.lerp
-import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
-import com.kyant.shapes.Capsule
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.Backdrop
 import io.github.androidpoet.liquidkit.internal.androidglass.catalog.utils.InteractiveHighlight
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.drawBackdrop
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.blur
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.lens
+import io.github.androidpoet.liquidkit.internal.androidglass.backdrop.effects.vibrancy
+import com.kyant.shapes.Capsule
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -37,15 +37,17 @@ fun LiquidButton(
     onClick: () -> Unit,
     backdrop: Backdrop,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     isInteractive: Boolean = true,
     tint: Color = Color.Unspecified,
     surfaceColor: Color = Color.Unspecified,
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable RowScope.() -> Unit
 ) {
     val animationScope = rememberCoroutineScope()
+
     val interactiveHighlight = remember(animationScope) {
-        InteractiveHighlight(animationScope = animationScope)
+        InteractiveHighlight(
+            animationScope = animationScope
+        )
     }
 
     Row(
@@ -58,28 +60,30 @@ fun LiquidButton(
                     blur(2f.dp.toPx())
                     lens(12f.dp.toPx(), 24f.dp.toPx())
                 },
-                layerBlock = if (isInteractive && enabled) {
+                layerBlock = if (isInteractive) {
                     {
                         val width = size.width
                         val height = size.height
+
                         val progress = interactiveHighlight.pressProgress
                         val scale = lerp(1f, 1f + 4f.dp.toPx() / size.height, progress)
-                        val maxOffset = size.minDimension
-                        val offset = interactiveHighlight.offset
-                        val offsetAngle = atan2(offset.y, offset.x)
-                        val initialDerivative = 0.05f
-                        val maxDragScale = 4f.dp.toPx() / size.height
 
+                        val maxOffset = size.minDimension
+                        val initialDerivative = 0.05f
+                        val offset = interactiveHighlight.offset
                         translationX = maxOffset * tanh(initialDerivative * offset.x / maxOffset)
                         translationY = maxOffset * tanh(initialDerivative * offset.y / maxOffset)
+
+                        val maxDragScale = 4f.dp.toPx() / size.height
+                        val offsetAngle = atan2(offset.y, offset.x)
                         scaleX =
                             scale +
-                                maxDragScale * abs(cos(offsetAngle) * offset.x / size.maxDimension) *
-                                (width / height).fastCoerceAtMost(1f)
+                                    maxDragScale * abs(cos(offsetAngle) * offset.x / size.maxDimension) *
+                                    (width / height).fastCoerceAtMost(1f)
                         scaleY =
                             scale +
-                                maxDragScale * abs(sin(offsetAngle) * offset.y / size.maxDimension) *
-                                (height / width).fastCoerceAtMost(1f)
+                                    maxDragScale * abs(sin(offsetAngle) * offset.y / size.maxDimension) *
+                                    (height / width).fastCoerceAtMost(1f)
                     }
                 } else {
                     null
@@ -92,28 +96,27 @@ fun LiquidButton(
                     if (surfaceColor.isSpecified) {
                         drawRect(surfaceColor)
                     }
-                },
+                }
             )
             .clickable(
                 interactionSource = null,
                 indication = if (isInteractive) null else LocalIndication.current,
-                enabled = enabled,
                 role = Role.Button,
-                onClick = onClick,
+                onClick = onClick
             )
             .then(
-                if (isInteractive && enabled) {
+                if (isInteractive) {
                     Modifier
                         .then(interactiveHighlight.modifier)
                         .then(interactiveHighlight.gestureModifier)
                 } else {
                     Modifier
-                },
+                }
             )
-            .height(48.dp)
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            .height(48f.dp)
+            .padding(horizontal = 16f.dp),
+        horizontalArrangement = Arrangement.spacedBy(8f.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
-        content = content,
+        content = content
     )
 }

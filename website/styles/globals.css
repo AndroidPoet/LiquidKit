@@ -1,0 +1,141 @@
+:root {
+  --lk-accent: #2ec5ce;
+  --lk-accent-2: #4fa3ff;
+}
+
+@keyframes lk-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lk-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes lk-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.lk-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1.5rem 2.5rem;
+  animation: lk-fade-up 0.6s ease both;
+}
+
+.lk-hero-badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--lk-accent);
+  background: color-mix(in srgb, var(--lk-accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lk-accent) 35%, transparent);
+  margin-bottom: 1.2rem;
+}
+
+.lk-hero-title {
+  font-size: clamp(2.8rem, 8vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  margin: 0;
+  background: linear-gradient(110deg, var(--lk-accent-2), var(--lk-accent), var(--lk-accent-2));
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: lk-gradient 8s ease infinite;
+}
+
+.lk-hero-subtitle {
+  max-width: 38rem;
+  margin: 1.1rem auto 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.dark .lk-hero-subtitle {
+  color: #9ca3af;
+}
+
+.lk-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.lk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.lk-btn:hover {
+  transform: translateY(-2px);
+}
+
+.lk-btn-primary {
+  color: #04121a;
+  background: linear-gradient(120deg, var(--lk-accent-2), var(--lk-accent));
+  box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--lk-accent) 70%, transparent);
+}
+
+.lk-btn-primary:hover {
+  box-shadow: 0 12px 30px -8px color-mix(in srgb, var(--lk-accent) 80%, transparent);
+}
+
+.lk-btn-ghost {
+  color: inherit;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.lk-btn-ghost:hover {
+  border-color: var(--lk-accent);
+  color: var(--lk-accent);
+}
+
+/* Code-block polish */
+.nextra-code pre {
+  border-radius: 0.7rem !important;
+  transition: box-shadow 0.2s ease;
+}
+
+.nextra-code pre:hover {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--lk-accent) 45%, transparent),
+    0 10px 30px -12px color-mix(in srgb, var(--lk-accent) 55%, transparent);
+}

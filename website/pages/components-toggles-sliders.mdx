@@ -1,0 +1,41 @@
+---
+title: Toggles, Sliders & Segmented
+description: LiquidToggle, LiquidSlider, LiquidSegmentedControl and navigation — the core controls of LiquidKit.
+---
+
+# Toggles, Sliders & Segmented
+
+The core control set: `LiquidToggle`, `LiquidSlider`, `LiquidSegmentedControl` (with
+`LiquidSegment`), plus navigation via `LiquidTabScaffold`.
+
+```kotlin
+import io.github.androidpoet.liquidkit.toggle.LiquidToggle
+import io.github.androidpoet.liquidkit.slider.LiquidSlider
+import io.github.androidpoet.liquidkit.segmented.LiquidSegment
+import io.github.androidpoet.liquidkit.segmented.LiquidSegmentedControl
+
+@Composable
+fun Controls() {
+    var on by remember { mutableStateOf(true) }
+    LiquidToggle(checked = on, onCheckedChange = { on = it })
+
+    var value by remember { mutableStateOf(0.5f) }
+    LiquidSlider(value = value, onValueChange = { value = it })
+
+    val segments = Density.entries.map { LiquidSegment(key = it, label = it.title) }
+    LiquidSegmentedControl(
+        segments = segments,
+        selectedKey = density,
+        onSelected = { density = it },
+    )
+}
+```
+
+For tabbed navigation, use `LiquidTabScaffold` (or the optional
+`io.github.androidpoet:liquidkit-navigation3` helpers for a Navigation 3 tab stack).
+
+## Android vs iOS
+
+- **Android** — every control is rendered by the internal Liquid Glass shader engine.
+- **iOS** — each wraps the matching native control (`UISwitch`, `UISlider`,
+  `UISegmentedControl`, and a native tab bar), so they adopt system Liquid Glass on iOS 26.

@@ -1,0 +1,51 @@
+---
+title: Architecture
+description: How LiquidKit renders Liquid Glass — an Android shader engine and genuine native iOS controls behind one shared Compose API.
+---
+
+import { Callout } from 'nextra/components'
+
+# Architecture
+
+LiquidKit exposes **one shared Compose Multiplatform API** built with `expect`/`actual`. Every
+component is declared once in `commonMain`; the platform `actual` implementations diverge so each
+platform renders the glass the way that platform does it best.
+
+## Android: shader rendering
+
+On Android, LiquidKit renders the Liquid Glass look entirely in-Compose. An internal **backdrop
+capture + refraction / Liquid Glass shader engine** samples what is drawn behind a component and
+applies the glass distortion, highlight and tint. On supported API levels this uses a
+`RuntimeShader` (AGSL) pipeline; the engine is internal to the library, so host apps just place the
+composables and get the effect without managing any platform views.
+
+## iOS: genuine native controls
+
+On iOS, each component wraps a **real UIKit control** rather than re-drawing it. Because the
+controls are genuine system views, on **iOS 26** they automatically adopt the system Liquid Glass
+material; on earlier versions they fall back to a `UIBlurEffect` `systemMaterial`.
+
+<Callout type="info">
+Because iOS uses real UIKit controls, accessibility, focus, system gestures and the platform look
+all come for free — and they track future OS updates automatically.
+</Callout>
+
+## Component → renderer mapping
+
+| Component | Android renderer | iOS native control |
+| --- | --- | --- |
+| `LiquidButton` / `LiquidFab` | Shader glass surface | `UIButton` glass configuration |
+| `LiquidSurface` / `LiquidGlassContainer` | Shader glass surface | `UIVisualEffectView` (`UIGlassEffect` / `UIBlurEffect`) |
+| `LiquidDropdownMenu` | Shader glass surface | `UIButton` + `UIMenu` |
+| `LiquidPicker` | Shader glass surface | `UIPickerView` |
+| `LiquidTextField` | Shader glass surface | `UITextField` |
+| `LiquidSearchField` | Shader glass surface | `UISearchTextField` |
+| `LiquidStepper` | Shader glass surface | `UIStepper` |
+| `LiquidMediaControl` | Shader glass surface | Native transport controls |
+| `LiquidToolbar` | Shader glass surface | `UINavigationBar` |
+| `LiquidSheet` | Shader glass surface | Native glass surface (`UIVisualEffectView`) |
+| `LiquidToggle` | Shader glass surface | `UISwitch` |
+| `LiquidSlider` | Shader glass surface | `UISlider` |
+| `LiquidSegmentedControl` | Shader glass surface | `UISegmentedControl` |
+
+The takeaway: **Android shader, iOS native** — one API, two faithful renderings.
